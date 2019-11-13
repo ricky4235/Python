@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS選擇器互動測試工具</title>
+<style type="text/css">
+body {
+   background-color: white;
+   font-family: sans-serif;
+   box-sizing: border-box;
+   -mox-box-sizing: border-box;
+}
+.caption1 {
+   margin-bottom: 0.1em;
+   font-size: 100%;
+   color: #333;
+}
+.caption {
+   margin-bottom: 0.1em;
+   font-size: 90%;
+   color: #333;
+}
+#_meat {
+   margin: 0 1em;
+}
+#_expr {
+   font-size: 110%;
+   width: 100%;
+}
+#_para {
+   width: 250px;
+}    
+#_in, #_out {
+   display: block;
+   width: 100% 
+}
+input {
+   background-color: #ffd;
+   width: 99%;
+} 
+textarea {
+   background:linear-gradient(#F9EFAF, #F7E98D);
+} 
+#_outputHTML {
+   border: 2px ridge #ddd;
+   padding: 0.3em 0;
+   font-size: 90%;
+   background-color: #f0f0f0;
+}
+#_outputHTML * {
+   margin-left: 1em;
+}
+#_outputHTML > div {
+   margin-left: -1.5em;
+}
+.tag {
+   color: #20b;
+}
+.marked {
+   color: red;
+   background-color: yellow;
+}
+.text {
+   color: black;
+   margin-left: 2em !important;
+}
+#_layout {
+   margin-top: 0.7em;
+}
+</style>
+<script src="jquery.min.js"></script>
+<script src="FileSaver.min.js"></script>
+<script>
+// 產生選擇的HTML標籤
+function render(nodeIn, destNode) {
+   $.each(nodeIn[0].childNodes, function(){
+       var newNode;
+       newNode = $("<div style='font-size:80%;'>");
+       if (this.nodeType == 1) {
+          newNode.addClass('tag').append("<div><span class='nodeName'>&lt;" + this.nodeName + "&gt;<\/span><\/div>");
+          render($(this), newNode);
+          newNode.append("<div><span class='nodeName'>&lt;/" + this.nodeName + "&gt;<\/span><\/div>");
+       if ($(this).is(".marked"))
+          $("> div > .nodeName", newNode).addClass('marked');
+       } else {
+          if (! /[^\t\n\r ]/.test(this.nodeValue))
+               return true;
+          newNode.append("<div class='text'>" + this.nodeValue + "<\/div>");
+       }
+       destNode.append(newNode);
+       return true;
+   });
+}
+// 處理選擇器的選擇
+function decorate(expr) {
+   // 複製評估的HTML標籤
+   var d = $("<div>" + $("#_in").val() + "</div");
+   // alert($("#_in").val());
+   // 執行 jQuery 選擇器字串, 新增 .marked 屬性
+   var str = $(expr).val();
+   // 是否有選擇器字串
+   if (str)
+      $(str, d).each(function(){ $(this).addClass("marked"); });
+   // 產生HTML標籤顯示在 #_outputHTML
+   var out = $("#_outputHTML").empty();
+   render(d, out);    // 呼叫 render()函數
+}
+
+$(document).ready(function() {
+   // 初始textarea標籤內容
+   $("#_in").val($("#_initialIn").html());
+   $("#_out").val($("#_initialIn").html());
+   $("#_out").height(0);
+   $("#_out").height( $("#_out")[0].scrollHeight);
+   //alert($("#_initialIn").html())
+   decorate('#_expr');
+   // button標籤的click事件處理 - 當編輯後重新載入標籤
+   $("#_reload").click(function() {
+      // alert($("#_out").val());
+      $("#_in").val($("#_out").val());
+      $("#_out").height(0);
+      $("#_out").height($("#_out")[0].scrollHeight);
+      decorate('#_expr');
+   });
+   // button標籤的click事件處理 - 載入選擇的HTML標籤檔案 
+   $("#_loadHTML").click(function() {
+      // Init load event.
+      var loadInput = document.getElementById('load');
+      loadInput.addEventListener('change', loadhtmlfile, false);
+      loadInput.click();
+   });
+   // 載入HTML檔案
+   function loadhtmlfile(event) {
+      // alert("loadhtmlfile");
+      var files = event.target.files;
+      // Only allow uploading one file.
+      if (files.length != 1) {
+           return;
+      }
+      // FileReader
+      var reader = new FileReader();
+      reader.onloadend = function(event) {
+           var target = event.target;
+           // 2 == FileReader.DONE
+           if (target.readyState == 2) {
+               $("#_out").val(target.result);   
+               $("#_in").val($("#_out").val());
+               $("#_out").height(0);
+               $("#_out").height($("#_out")[0].scrollHeight);
+               decorate('#_expr');
+           }
+           // Reset value of input after loading because Chrome will not fire
+           // a 'change' event if the same file is loaded again.
+          document.getElementById('load').value = '';
+       };
+       reader.readAsText(files[0]);
+   }  
+   $("#_out").css("overflow","hidden").bind("keydown keyup", function(){  
+       $(this).height('0px').height($(this).prop("scrollHeight")+"px");  
+   }).keydown();  
+});
+</script>
+</head>
+<body>
+<div id="_meat">
+  <div id="_xpath">
+    <p class="caption1"><b>CSS選擇器 :</b></p>
+    <input id="_expr" value="#home" onkeyup="decorate('#_expr')"><br/>
+  </div>  
+<!-- TextArea的初始內容 -->
+<div id="_initialIn" style="display: none;"><h1>歡迎使用CSS選擇器</h1>
+<div class="intro">
+  <p>我的名字是<span id="Lastname">陳</span>允傑</p>
+  <p id="home">我住在台灣</p>
+  <p>我有很多朋友</p>
+</div>
+<p><b>我們只是從網路找出我們需要的資料.</b></p></div>
+
+<table title="layout table" id="_layout" width="100%" cellpadding="0" cellspacing="0">
+   <tr>
+       <td class="caption"><b>標示符合的HTML元素:</b></td>
+       <td class="caption"><b>測試的原始HTML標籤:</b></td>
+   </tr>
+   <tr style="height: 100%">
+       <td valign="top" style="height: 100%; width: 40%; padding-right: 1em">
+          <div id="_outputHTML"></div>                   
+       </td>
+       <td valign="top" style="height: 100%;">
+          <textarea id="_in" style="display: none;"></textarea>
+          <textarea id="_out"></textarea><br/>
+          <button id="_reload">重新載入HTML標籤</button>  
+          <button id="_loadHTML">開啟HTML標籤檔案</button> 
+          <input type="file" id="load" style="display: none;"/>
+          <small>開發者: 陳會安 2018</small> 
+       </td>
+   </tr>
+</table>
+</div>
+</body>
+</html>

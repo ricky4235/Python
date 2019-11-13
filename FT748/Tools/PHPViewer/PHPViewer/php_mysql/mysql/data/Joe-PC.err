@@ -1,0 +1,28 @@
+160816 21:01:37 [Note] Event Scheduler: Loaded 0 events
+160816 21:01:37 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+160816 21:36:54 [Note] Event Scheduler: Loaded 0 events
+160816 21:36:54 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+170801  9:24:50 [Note] Event Scheduler: Loaded 0 events
+170801  9:24:50 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+170801 10:43:50 [Note] Event Scheduler: Loaded 0 events
+170801 10:43:50 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+170801 13:30:33 [Note] Event Scheduler: Loaded 0 events
+170801 13:30:33 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+170801 13:55:16 [Note] Event Scheduler: Loaded 0 events
+170801 13:55:16 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+170810 17:22:41 [Note] Event Scheduler: Loaded 0 events
+170810 17:22:41 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+170816 11:00:01 [Note] Event Scheduler: Loaded 0 events
+170816 11:00:01 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+180717 18:29:32 [Note] Event Scheduler: Loaded 0 events
+180717 18:29:32 [Note] .\php_mysql\mysql\bin\mysqld.exe: ready for connections.
+Version: '5.1.40'  socket: ''  port: 3306  Source distribution
+180717 18:29:32 [ERROR] mysqld: Got error 10038 from select
