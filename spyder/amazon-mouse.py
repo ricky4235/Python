@@ -27,15 +27,14 @@ def get_resource(url):
 def parse_html(html_str):
     return BeautifulSoup(html_str, "lxml")
 
-          
 def get_goods(soup):
     goods = []
-    rows = soup.find_all("div", class_="a-fixed-left-grid-col a-col-right")  
+    rows = soup.find_all("li", class_="a-spacing-medium p13n-sc-list-item")  #a-fixed-left-grid-col a-col-right  #a-section a-spacing-none aok-relative
     for row in rows:
         name = row.find("div", class_="p13n-sc-truncated")
-        star = row.find("span", class_="a-icon-alt").text
-        sample = row.find("a", class_="a-size-small a-link-normal").text
-        price = row.find("span", class_="p13n-sc-price").text
+        star = row.find("span", class_="a-icon-alt").get_text()
+        sample = row.find("a", class_="a-size-small a-color-secondary").text
+        price = row.find("span", class_="a-color-base")
         
         good= [name, star, sample, price]
         goods.append(good)
@@ -68,4 +67,3 @@ if __name__ == "__main__":
     goods = web_scraping_bot(urls) 
     for good in goods:
         print(good)
-

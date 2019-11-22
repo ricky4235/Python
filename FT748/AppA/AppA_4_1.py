@@ -12,7 +12,7 @@ def convert_to_f(c):
     return f
 
 print_msg()
-c = 100
+c = 55
 f = convert_to_f(c)
 print("華氏: " + str(f))
 if is_valid_num(c):

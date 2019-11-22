@@ -1,4 +1,4 @@
-a = 3
+a = 3 #賦值
 b = 4
 print(a == b)  # 相等: 顯示 "False"
 print(a != b)  # 不等: 顯示 "True"
