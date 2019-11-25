@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # 目標URL網址
-URL = "https://www.amazon.com/Best-Sellers-Computers-Accessories-Computer-Keyboards/zgbs/pc/12879431/ref=zg_bs_nav_pc_4_11036491_encoding=UTF8&pg={0}"
+URL = "https://24h.pchome.com.tw/store/DCAHBC"
        
 def generate_urls(url, start_page, end_page): #使用參數基底URL、開始和結束頁數來建立URL清單
     urls = []   #爬蟲主程式建立的目標網址清單
@@ -29,19 +29,17 @@ def parse_html(html_str):
 
 def get_goods(soup):
     goods = []
-    rows = soup.find_all("li", class_="zg-item-immersion")  #a-fixed-left-grid-col a-col-right  #a-section a-spacing-none aok-relative
+    rows = soup.find_all("dd", id="DCAHBC-A9009*")
     for row in rows:
-        name = row.find("div", class_="p13n-sc-truncated")
-        star = row.find("span", class_="a-icon-alt").get_text()
-        sample = row.find("a", class_="a-size-small a-link-normal").text
-        price = row.find("span", class_="p13n-sc-price").text
+        name = row.find("span", class_="extra").text
+        price = row.find("span", class_="value").text
         
-        good= [name, star, sample, price]
+        good= [name, price]
         goods.append(good)
     return goods
 
 def web_scraping_bot(urls):
-    all_goods = [["品名","評價","樣本數","價格"]]  #巢狀清單
+    all_goods = [["品名","價格"]]  #巢狀清單
     page = 1
     
     for url in urls:
