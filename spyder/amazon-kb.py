@@ -31,9 +31,11 @@ def get_goods(soup):
     goods = []
     rows = soup.find_all("li", class_="zg-item-immersion")  #a-fixed-left-grid-col a-col-right  #a-section a-spacing-none aok-relative
     for row in rows:
-        name = row.find("div", class_="p13n-sc-truncated")
-        star = row.find("span", class_="a-icon-alt").get_text()
-        sample = row.find("a", class_="a-size-small a-link-normal").text
+        #照理說是直接取.text，但不知為何一直出現AttributeError: 'NoneType' object has no attribute 'text'
+        #只好用str()將bs4.element.Tag轉換成字串，再使用 []取部分內容(這個動作叫 slicing)
+        name = row.find("div", class_="a-section a-spacing-small").img["alt"]
+        star = str(row.find("span", class_="a-icon-alt"))[25:28]
+        sample = str(row.find("a", class_="a-size-small a-link-normal"))[-9:-4]
         price = row.find("span", class_="p13n-sc-price").text
         
         good= [name, star, sample, price]
