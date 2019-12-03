@@ -37,10 +37,10 @@ def get_goods(soup):
         #只好用str()將bs4.element.Tag轉換成字串，再使用 []取部分內容(這個動作叫 slicing)
         rank = row.find("span", class_="zg-badge-text").text
         name = row.find("div", class_="a-section a-spacing-small").img["alt"] #text無法取得，但<img>的alt也有同樣的品名
-        star = str(row.find("span", class_="a-icon-alt"))[25:28]  #位置剛好都在25~28之間，所以轉換成str再slicing
+        star = row.find("span", class_="a-icon-alt").text  #位置剛好都在25~28之間，所以轉換成str再slicing
         #下面兩行比較特別，先轉換成str，但位置都不同，所以得用find找">"和"<"的位置，再包在slicing中，等同取得">"到"<"之間的字串
-        reviews_tag = str(row.find("a", class_="a-size-small a-link-normal"))
-        reviews = reviews_tag[reviews_tag.find(">",1)+1 : reviews_tag.find("<",1)]
+        reviews = row.find("a", class_="a-size-small a-link-normal").text
+        #reviews = reviews_tag[reviews_tag.find(">",1)+1 : reviews_tag.find("<",1)]
         price = row.find("span", class_="p13n-sc-price").text
         
         good= [rank, name, star, reviews, price]
