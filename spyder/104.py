@@ -18,9 +18,9 @@ headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 
 # 查詢的關鍵字
 my_params = {'ro':'1', # 限定全職的工作，如果不限定則輸入0
-             'keyword':'行銷企劃', # 想要查詢的關鍵字
+             'keyword':'數據分析', # 想要查詢的關鍵字
              'area':'6001001000%2C6001002003%2C6001002007%2C6001002011%2C6001002014%2C6001002015%2C6001002021%2C6001002020%2C6001002023%2C6001002025', # 限定在台北+新北(西部)的工作
-             'isnew':'3', # 只要最近一個月有更新的過的職缺
+             'isnew':'30', # 只要最近一個月有更新的過的職缺
              'mode':'l'} # 清單的瀏覽模式
 
 """
@@ -115,7 +115,7 @@ while i < len(List):
     except:
         print("Fail and Try Again!")
         pass   #失敗的話Try Again會一直無限迴圈，所以新增跳過再繼續
-    continue
+    
 
 JobList
 
