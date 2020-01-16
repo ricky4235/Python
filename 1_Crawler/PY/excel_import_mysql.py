@@ -73,7 +73,7 @@ def readTable(cursor):
  
 if __name__ == '__main__':
     # 和資料庫建立連線
-    conn = pymysql.connect('localhost', 'root', 'zx8212290', charset='utf8')
+    conn = pymysql.connect('localhost', 'root', 'admin', charset='utf8')
     # 建立遊標連結
     cur = conn.cursor()
  
