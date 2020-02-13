@@ -20,7 +20,11 @@ headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 my_params = {'ro':'1', # 限定全職的工作，如果不限定則輸入0
              'keyword':'數據分析', # 想要查詢的關鍵字
              'area':'6001001000%2C6001002003%2C6001002007%2C6001002011%2C6001002014%2C6001002015%2C6001002021%2C6001002020%2C6001002023%2C6001002025', # 限定在台北+新北(西部)的工作
+<<<<<<< Updated upstream
              'isnew':'1', # 只要最近一個月有更新的過的職缺
+=======
+             'isnew':'10', # 只要最近一個月有更新的過的職缺
+>>>>>>> Stashed changes
              'mode':'l'} # 清單的瀏覽模式
 
 """
@@ -28,7 +32,7 @@ my_params = {'ro':'1', # 限定全職的工作，如果不限定則輸入0
 """
 # 這裡會透過Selenium打開一個瀏覽器並開始跑程式~
 url = requests.get('https://www.104.com.tw/jobs/search/?' , my_params, headers = headers).url
-driver = webdriver.Chrome()
+driver = webdriver.Chrome("./chromedriver")
 driver.get(url)
 
 # 網頁的設計方式是滑動到下方時，會自動加載新資料，在這裡透過程式送出Java語法幫我們執行「滑到下方」的動作
@@ -115,6 +119,7 @@ while i < len(List):
     except:
         print("Fail and Try Again!")
         pass   #失敗的話Try Again會一直無限迴圈，所以新增跳過再繼續
+        
     
 
 JobList
