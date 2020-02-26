@@ -15,12 +15,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # 目標URL網址
-URL = "https://www.amazon.com/Best-Sellers-Computers-Accessories-Computer-Mice/zgbs/pc/11036491/ref=zg_bs_pg_2?_encoding=UTF8&pg={0}"
+#url_no_pg = "https://www.amazon.com/Best-Sellers-Computers-Accessories-Computer-Mice/zgbs/pc/11036491/ref=zg_bs_pg_2?_encoding=UTF8" #美國
+#url_no_pg = "https://www.amazon.cn/gp/bestsellers/pc/1454004071/ref=zg_bs_nav_pc_3_888467051" #中國
+#url_no_pg = "https://www.amazon.ae/gp/bestsellers/computers/12050386031/ref=zg_bs_nav_4_12050385031" #阿拉伯
+url_no_pg = "https://www.amazon.com.br/gp/bestsellers/computers/16364917011/ref=zg_bs_nav_computers_4_16364919011" #巴西
+URL = url_no_pg +"&pg={0}"  #加入換頁字串
+
        
 def generate_urls(url, start_page, end_page): #使用參數基底URL、開始和結束頁數來建立URL清單
     urls = []   #爬蟲主程式建立的目標網址清單
     for page in range(start_page, end_page+1):
-        urls.append(url.format(page))
+        urls.append(url.format(page)) #format會讓{帶括號}裡的東西格式化
     return urls
 
 def get_resource(url):
@@ -35,16 +40,32 @@ def parse_html(html_str):
 def get_goods(soup):
     goods = []
     rows = soup.find_all("li", class_="zg-item-immersion")
-    for row in rows:
-        #照理說是直接取.text最快，但不知為何一直出現AttributeError: " 'NoneType' object has no attribute 'text' " 爬文也沒解
-        #只好用str()將bs4.element.Tag轉換成字串，再使用 []取部分內容(這個動作叫 slicing)
-        rank = row.find("span", class_="zg-badge-text").text
-        name = row.find("div", class_="a-section a-spacing-small").img["alt"] #text無法取得，但<img>的alt也有同樣的品名
-        star = str(row.find("span", class_="a-icon-alt"))[25:28]  #位置剛好都在25~28之間，所以轉換成str再slicing
-        #下面兩行比較特別，先轉換成str，但位置都不同，所以得用find找">"和"<"的位置，再包在slicing中，等同取得">"到"<"之間的字串
-        reviews_tag = str(row.find("a", class_="a-size-small a-link-normal"))
-        reviews = reviews_tag[reviews_tag.find(">",1)+1 : reviews_tag.find("<",1)]
-        price = str(row.find("span", class_="p13n-sc-price"))[28:33]
+    #因為網頁常有空值，故需使用try except，不然會遇到None，就整個程式停掉
+    #下面會有兩種方法是因為之前不懂，就直接抓標籤，然後硬湊出來，還是把方法留下
+    for row in rows:  
+        rank = row.find("span", class_="zg-badge-text").text #因為這不會有None，不需使用try except
+        try:
+            #name = row.find("div", class_="p13n-sc-truncated").text  #不知為何這個抓出來都空白
+            name = row.find("div", class_="a-section a-spacing-small").img["alt"]
+        except:
+            name = None
+        try:
+            star = row.find("span", class_="a-icon-alt").text
+            #star = str(row.find("span", class_="a-icon-alt"))[25:28]
+        except:
+            star = None
+        try:
+            reviews = row.find("a", class_="a-size-small a-link-normal").text
+            #下面兩行比較特別，先轉換成str，但位置都不同，所以得用find找">"和"<"的位置，再包在slicing中，等同取得">"到"<"之間的字串
+            #reviews_tag = str(row.find("a", class_="a-size-small a-link-normal"))
+            #reviews = reviews_tag[reviews_tag.find(">",1)+1 : reviews_tag.find("<",1)]
+        except:
+            reviews = None
+        try:         
+            price = row.find("span", class_="p13n-sc-price").text
+            #price = str(row.find("span", class_="p13n-sc-price"))[28:33]
+        except:
+            price = None            
         
         good= [rank, name, star, reviews, price]
         goods.append(good)
