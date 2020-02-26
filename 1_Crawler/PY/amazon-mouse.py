@@ -82,11 +82,11 @@ if __name__ == "__main__":
     print(urls)
     goods = web_scraping_bot(urls) 
     df = pd.DataFrame(goods)       #用dataframe列出
-    #print(df)
-    #for good in goods:                #用list列出
-    #    print(good)
+    print(df)
+    for good in goods:                #用list列出
+        print(good)
     
-    #save_to_csv(goods, "Amazon_Mouse_Rank.csv")
+    save_to_csv(goods, "Amazon_Mouse_Rank.csv")
     
 """
 資料分析部分

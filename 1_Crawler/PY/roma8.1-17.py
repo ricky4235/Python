@@ -1,25 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov 22 12:14:42 2019
+Created on Tue Feb 25 17:02:41 2020
 
 @author: 11004076
 """
-   
-import time
-import requests
-from bs4 import BeautifulSoup
-import pandas
-import csv
-
-# 目標URL網址
-URL = "https://www.amazon.cn/gp/bestsellers/pc/888524051/ref=pd_zg_hrsr_pc"
-
-       
-def generate_urls(url, start_page, end_page): #使用參數基底URL、開始和結束頁數來建立URL清單
-    urls = []   #爬蟲主程式建立的目標網址清單
-    for page in range(start_page, end_page+1):
-        urls.append(url.format(page))
-    return urls
 
 def get_resource(url):
     headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
@@ -81,3 +65,14 @@ if __name__ == "__main__":
     #    print(good)
     save_to_csv(goods, "Amazon_KB_Rank.csv")
     
+#在聖靈裏的生活
+#1如今，那些在基督耶穌裏的就不定罪了。 2因為賜生命聖靈的律，在基督耶穌裏釋放了我，使我脫離罪和死的律了。 
+#3律法既因肉體軟弱，有所不能行的，神就差遣自己的兒子，成為罪身的形狀，作了贖罪祭，在肉體中定了罪案， 
+4使律法的義成就在我們這不隨從肉體、只隨從聖靈的人身上。 5因為，隨從肉體的人體貼肉體的事；隨從聖靈的人體貼聖靈的事。 
+6體貼肉體的，就是死；體貼聖靈的，乃是生命、平安。 7原來體貼肉體的，就是與神為仇；因為不服神的律法，也是不能服， 
+8而且屬肉體的人不能得神的喜歡。 9如果神的靈住在你們心裏，你們就不屬肉體，乃屬聖靈了。人若沒有基督的靈，就不是屬基督的。 
+10基督若在你們心裏，身體就因罪而死，心靈卻因義而活。 
+11然而，叫耶穌從死裏復活者的靈若住在你們心裏，那叫基督耶穌從死裏復活的，也必藉着住在你們心裏的聖靈，使你們必死的身體又活過來。
+12弟兄們，這樣看來，我們並不是欠肉體的債去順從肉體活着。 13你們若順從肉體活着，必要死；若靠着聖靈治死身體的惡行，必要活着。 
+14因為凡被神的靈引導的，都是神的兒子。 15你們所受的，不是奴僕的心，仍舊害怕；所受的，乃是兒子的心，因此我們呼叫：「阿爸！父！」 
+16聖靈與我們的心同證我們是神的兒女； 17既是兒女，便是後嗣，就是神的後嗣，和基督同作後嗣。如果我們和他一同受苦，也必和他一同得榮耀。
