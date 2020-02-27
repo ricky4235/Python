@@ -96,7 +96,7 @@ def save_to_csv(items, file):
             writer.writerow(item)
 
 if __name__ == "__main__":
-    urls = generate_urls(URL, 1, 3)  #爬取1~3頁
+    urls = generate_urls(URL, 1, 3)  #得到1~3頁url的
     print(urls)
     goods = web_scraping_bot(urls) 
     df = pandas.DataFrame(goods)       #用dataframe列出
