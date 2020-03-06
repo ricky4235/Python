@@ -29,11 +29,11 @@ def get_goods(soup):
     return goods
 
 def web_scraping_bot(urls):
-    all_goods = [["排名","品名","評價","評論數","價格"]]  #巢狀清單
+    all_goods = [["rank, name, star, reviews, price]]  #巢狀清單
     page = 1
     
     for url in urls:
-        print("抓取: 第" + str(page) + "頁 網路資料中...")
+        print("sd: d" + str(page) + "html.")
         page = page + 1
         r = get_resource(url)
         if r.status_code == requests.codes.ok:
