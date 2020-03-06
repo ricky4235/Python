@@ -31,7 +31,7 @@ def parse_html(html_str):
     return BeautifulSoup(html_str, "lxml")
 
 def get_goods(soup):
-    goods = []
+    goods = [] #
     rows = soup.find("div", "c1_t2i").find_all("div", class_="c2prKC")
     
     for row in rows:

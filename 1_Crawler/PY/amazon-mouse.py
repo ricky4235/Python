@@ -101,7 +101,7 @@ def save_to_csv(items, file):
 if __name__ == "__main__":
     urls = generate_urls(URL, 1, 3)  #得到1~3頁url的
     print(urls)
-    goods = web_scraping_bot(urls) 
+    goods = web_scraping_bot(urls)
     df = pd.DataFrame(goods)       #用dataframe列出
     print(df)
     for good in goods:                #用list列出
