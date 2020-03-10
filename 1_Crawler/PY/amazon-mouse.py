@@ -104,18 +104,19 @@ if __name__ == "__main__":
     goods = web_scraping_bot(urls)
     df = pd.DataFrame(goods)       #用dataframe列出
     print(df)
-    for good in goods:                #用list列出
-        print(good)
+    #for good in goods:                #用list列出
+    #    print(good)
     
-    save_to_csv(goods, "Amazon_Mouse_Rank.csv")
+    #save_to_csv(goods, "Amazon_Mouse_Rank.csv")
     
 """
 資料分析部分
 """
-
+"""
 df.columns = ["rank", "name", "star", "reviews", "price"]  #重新命名欄位名稱
 df_pivot = df.pivot_table(values = "name", columns = "star", aggfunc=np.count_nonzero)
 print(df_pivot)
     
 df_pivot.plot(kind = 'bar')
 plt.show()
+"""

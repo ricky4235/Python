@@ -46,7 +46,7 @@ def get_goods(soup):
         try:         
             Original_price = row.find("del", class_="c13VH6").text
         except:
-            Original_price = None   
+            Original_price = None
         try:         
             Discount = row.find("span", class_="c1hkC1").text
         except:

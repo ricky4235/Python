@@ -66,9 +66,12 @@ def bot(urls):
 
 if __name__ == "__main__":
 #get_urls
-    urls = get_urls(url, 'logitech', 1, 1)
+    urls = get_urls(url, 'logitech', 1, 3)
     print(urls)
+    print(get_resource(url))
+    """
 #get_resource
     goods = bot(urls)
     df = pd.DataFrame(goods)      #用dataframe列出
     print(df)
+    """
