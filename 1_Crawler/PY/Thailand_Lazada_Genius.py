@@ -31,7 +31,7 @@ def parse_html(html_str):
     return BeautifulSoup(html_str, "lxml")
 
 def get_goods(soup):
-    goods = [] #
+    goods = []
     rows = soup.find("div", "c1_t2i").find_all("div", class_="c2prKC")
     
     for row in rows:
@@ -59,6 +59,10 @@ def get_goods(soup):
         good= [name, Discount_price, Original_price, Discount, reviews]
         goods.append(good)
     return goods
+
+
+
+
 
 def web_scraping_bot(urls):
     all_goods = [["品名", "折價", "原價", "折率", "評論數"]]  #巢狀清單
