@@ -22,7 +22,7 @@ def importExcelToMysql(cur, path):
     # sheets = workbook.sheet_names()
     # worksheet = workbook.sheet_by_name(sheets[0])
     ###
- 
+
     ### openpyxl版本
     # 讀取excel檔案
     workbook = load_workbook(path)

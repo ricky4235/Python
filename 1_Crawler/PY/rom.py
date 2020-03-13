@@ -63,7 +63,7 @@ if __name__ == "__main__":
     print(df)
     #for good in goods:                #用list列出
     #    print(good)
-    save_to_csv(goods, "Amazon_KB_Rank.csv")
+    save_to_csv(goods, "Amazon_KB_Rank.csv") 
 
 
 
