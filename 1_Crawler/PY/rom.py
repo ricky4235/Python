@@ -46,7 +46,7 @@ def web_scraping_bot(urls):
             time.sleep(5) 
         else:
             print("HTTP request error...")
-            7
+            
             
 
     return all_goods
