@@ -43,10 +43,9 @@ def web_scraping_bot(urls):
             print("wait 5 second...")
             if soup.find("li", class_="a-disabled a-last"):
                 break
-            time.sleep(5) 
+            time.sleep(5)
         else:
             print("HTTP request error...")
-            
             
 
     return all_goods
