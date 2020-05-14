@@ -23,13 +23,13 @@ def get_goods(soup):
         star = row.find("span", class_="a-icon-alt").text
         reviews = row.find("a", class_="a-size-small a-link-normal").text
         price = row.find("span", class_="p13n-sc-price").text
-        
+
         good= [rank, name, star, reviews, price]
         goods.append(good)
     return goods
 
 def web_scraping_bot(urls):
-    all_goods = [["rank, name, star, reviews, price]] 
+    all_goods = [["rank, name, star, reviews, price]]
     page = 1
     
     for url in urls:
@@ -47,9 +47,7 @@ def web_scraping_bot(urls):
         else:
             print("HTTP request error...")
 
-
     return all_goods
-
 
 def save_to_csv(items, file):
     with open(file, "w+", newline="", encoding="utf_8_sig") as fp:
