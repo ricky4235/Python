@@ -40,7 +40,7 @@ def web_scraping_bot(urls):
             soup = parse_html(r.text)
             goods = get_goods(soup)
             all_goods = all_goods + goods
-            print("wait 5 second...")
+            print("wait 8 second...")
             if soup.find("li", class_="a-disabled a-last"):
                 break
             time.sleep(5)
@@ -70,7 +70,8 @@ if __name__ == "__main__":
         #基督裏的屬靈福氣
 #3願頌讚歸與我們主耶穌基督的父神！他在基督裏曾賜給我們天上各樣屬靈的福氣： 
 #4就如神從創立世界以前，在基督裏揀選了我們，使我們在他面前成為聖潔，無有瑕疵； 
-#5又因愛我們，就按着自己的意旨所喜悅的，預定我們藉着耶穌基督得兒子的名分， 
+#5又因愛我們，就按着自己的意旨所喜悅的，預定我們藉着耶穌基督得兒子的名分，
+        
 #6使他榮耀的恩典得着稱讚；這恩典是他在愛子裏所賜給我們的。 
 #7我們藉這愛子的血得蒙救贖，過犯得以赦免，乃是照他豐富的恩典。 
 #8這恩典是神用諸般智慧聰明，充充足足賞給我們的； 
