@@ -46,7 +46,7 @@ def web_scraping_bot(urls):
             time.sleep(5)
         else:
             print("HTTP request error...")
-#
+
     return all_goods
 
 def save_to_csv(items, file):
