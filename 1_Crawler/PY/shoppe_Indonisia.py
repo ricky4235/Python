@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue May 26 14:48:15 2020
+Created on Wed May 27 14:47:35 2020
 
 @author: 11004076
 """
@@ -16,11 +16,11 @@ from fake_useragent import UserAgent
 
 # 目標URL網址
 """直接在蝦皮搜尋"""
-#url = "https://ph.xiapibuy.com/search?keyword={0}&page={1}"
+#url = "https://id.xiapibuy.com/search?keyword={0}&page={1}"
 """在電腦配件中搜尋"""
-url = "https://ph.xiapibuy.com/search?category=18596&keyword={0}&subcategory=18613&page={1}"
-"""在電腦遊戲中搜尋"""
-#url = "https://ph.xiapibuy.com/search?category=20718&keyword={0}&subcategory=20729&page={1}"
+url = "https://id.xiapibuy.com/search?category=134&keyword={0}&page={1}"
+"""直接搜尋品牌"""
+url = "https://id.xiapibuy.com/search?attrId=14478&attrName=Merek&attrVal={0}&page={1}"
 
 def get_urls(url, query, start_page, end_page): 
     urls = []
@@ -53,21 +53,21 @@ def get_goods(soup):
             price = None
             
         try:
-            Original_price = row.find("div", class_="_1w9jLI QbH7Ig U90Nhh").text.replace("₱","")
+            Original_price = row.find("div", class_="_1w9jLI QbH7Ig U90Nhh").text.replace("Rp","")
         except:
             Original_price = None
 
         try:
-            sold = row.find("div", class_="_18SLBt").text.replace(" sold","")
-            #假如字串有包含K，將K取代掉，並將字串轉為浮點數，再乘以1000
-            if "K" in sold:
-                sold = sold.replace("K","")
+            sold = row.find("div", class_="_18SLBt").text.replace(" Terjual","")
+            #假如字串有包含RB，將RB取代掉，並將字串轉為浮點數，再乘以1000
+            if "RB" in sold:
+                sold = sold.replace("RB","")
                 sold = float(sold)*1000
         except:
             sold = None
 
         try:
-            link = "https://ph.xiapibuy.com/" + row.find("a").get('href')
+            link = "https://id.xiapibuy.com/" + row.find("a").get('href')
         except:
             link = None
         
@@ -76,7 +76,7 @@ def get_goods(soup):
     return goods
 
 def web_scraping_bot(urls):
-    all_goods = [["品名","價格","原價","售出量", "網址"]]  #巢狀清單
+    all_goods = [["品名","價格(單位:千)","原價(單位:千)","售出量", "網址"]]  #巢狀清單
     page = 1
     
     for url in urls:
@@ -93,7 +93,7 @@ def web_scraping_bot(urls):
             now_page = soup.find("span", class_="shopee-mini-page-controller__current").text
             all_page = soup.find("span", class_="shopee-mini-page-controller__total").text
             if now_page == all_page:
-                break   #已經沒有下一頁            
+                break   #已經沒有下一頁
             time.sleep(5) 
         else:
             print("HTTP請求錯誤...")
@@ -119,4 +119,4 @@ if __name__ == "__main__":
     #for good in goods:                #用list列出
     #    print(good)
     
-    save_to_csv(goods, "Shoppe_Philippines_genius.csv")
+    save_to_csv(goods, "Shoppe_Indonisia_ComputerAccessories_genius.csv")
