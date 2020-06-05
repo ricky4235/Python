@@ -25,7 +25,7 @@ url = "https://id.xiapibuy.com/search?attrId=14478&attrName=Merek&attrVal={0}&pa
 def get_urls(url, query, start_page, end_page): 
     urls = []
     for page in range(start_page, end_page+1):
-        urls.append(url.format(query, page))    #query帶入url的{0}、page帶入{1}
+        urls.append(url.format(query, page-1))    #query帶入url的{0}、page帶入{1}
     return urls
 
 def get_resource(url):
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     #print(get_resource(URL).history)
     print(get_resource(url).status_code)
 
-    urls = get_urls(url, "genius", 0, 10)
+    urls = get_urls(url, "genius", 1, 3)
     print(urls)
 
     goods = web_scraping_bot(urls)
