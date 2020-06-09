@@ -49,11 +49,7 @@ def web_scraping_bot(urls):
             print("HTTP request error...")
 
     return all_goods
- #20就是照他在基督身上所運行的大能大力，使他從死裏復活，叫他在天上坐在自己的右邊， 
- #21遠超過一切執政的、掌權的、有能的、主治的，和一切有名的；
-     #不但是今世的，連來世的也都超過了。 
- #22又將萬有服在他的腳下，使他為教會作萬有之首。 
- #23教會是他的身體，是那充滿萬有者所充滿的。
+
 def save_to_csv(items, file):
     with open(file, "w+", newline="", encoding="utf_8_sig") as fp:
         writer = csv.writer(fp)

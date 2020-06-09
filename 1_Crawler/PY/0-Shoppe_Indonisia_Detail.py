@@ -4,12 +4,15 @@ Created on Thu May 28 15:34:16 2020
 
 @author: 11004076
 """
-
-import pandas as pd
-import re, time, requests
-import requests
-from selenium import webdriver
+"""
+    遍歷各商品爬取細節_20200609完整版
+1. 先取得搜尋頁數的網址List
+2. 進入每個商品頁面
+3. 爬取進入頁面之商品細節
+"""
+import re, time, requests, csv
 from bs4 import BeautifulSoup
+import csv
 
 #解析(蝦皮headers要用Googlebot)
 def get_soup(url):
@@ -20,15 +23,16 @@ def get_soup(url):
 #搜尋網址&換頁
 def get_urls(url, query, start_page, end_page): 
     urls = []
+    
     for page in range(start_page, end_page+1):
         urls.append(url.format(query, page))    #query帶入url的{0}、page帶入{1}
+    print(urls)    
     return urls
 
 # 依序爬取每頁點入網址
 def FindLinks(pages):
     linklist = []
-    for page in pages:
-        
+    for page in pages:  
         soup = get_soup(page)
         links = soup.find_all("div",class_="col-xs-2-4 shopee-search-item-result__item")
         for link in links:
@@ -112,21 +116,34 @@ def get_goods(url):
         except:
             description = None
             
-        good= [name, price, Original_price, star, reviews, sold, stock, seller, seller_link, seller_from, category, brand, description]
+        try:
+            URL = url
+        except:
+            URL = None
+            
+        good= [name, price, Original_price, star, reviews, sold, stock, seller, seller_link, seller_from, category, brand, description, URL]
         goods.append(good)
         
     return goods[1]  #因為不知為何第[0]列都會出現一排None，只好取第[1]列
 
-# 爬取每一個點入頁面
+# 將每一個點入頁面的List依序爬取
 def scraping(urls):
-    ndf = []
-    for i in FindLinks(urls):
-        g = get_goods(i)
-        ndf.append(g)
-        time.sleep(0.5)
-        df_all = pd.DataFrame(ndf,columns = ["name","price","Original_price","star","reviews","sold","stock","seller","seller_link","seller_from","category","brand","description"])
-    return df_all
+    all_goods = [["name","price","Original_price","star","reviews","sold","stock","seller","seller_link","seller_from","category","brand","description", "URL"]]
+    for idx,i in enumerate(FindLinks(urls)):  #記錄目前進行的迴圈次數，配上總迴圈次數，可做為進度條使用。
+        print("Crawing No." + str(idx+1) + " Item in Total:" + str(len(FindLinks(urls))) + "Item")
+        
+        goods = get_goods(i)
+        time.sleep(0.2)
+        all_goods.append(goods)
+    return all_goods
 
+#存成CSV
+def save_to_csv(items, file):
+    with open(file, "w+", newline="", encoding="utf_8_sig") as fp:  #utf_8_sig:能讓輸出的csv正確顯示中文(utf_8會有亂碼)
+        writer = csv.writer(fp)
+        for item in items:
+            writer.writerow(item)
+    
 # 開始爬蟲
 if __name__ == "__main__":
     """直接在蝦皮搜尋"""
@@ -136,10 +153,7 @@ if __name__ == "__main__":
     """直接搜尋品牌"""
     url = "https://id.xiapibuy.com/search?attrId=14478&attrName=Merek&attrVal={0}&page={1}"
     
-    urls = get_urls(url, "genius", 6, 11)
+    urls = get_urls(url, "logitech", 0, 1)
     
-    pd_links = pd.DataFrame(FindLinks(urls),columns = ["link"])
-    #要合併分別爬的商品資料&網址list，只找到join方法(但皆要先轉成DataFrame)
-    #且要同時跑才會對應到一樣順序的資料
-    m = scraping(urls).join(pd_links)  
-    m.to_csv("Shoppe_Indonisia2.csv")
+    m = scraping(urls)
+    save_to_csv(m, "m.csv")
