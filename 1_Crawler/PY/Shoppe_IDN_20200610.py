@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed May 27 14:47:35 2020
+Created on Wed Jun 10 11:20:56 2020
 
 @author: 11004076
 """
 
+"""
+爬取【印尼蝦皮】搜尋頁面簡易商品資料_20200610完整版
+1. 使用針對蝦皮的headers = {"user-agent": "Googlebot"}取得解析網頁資料
+2. 先取得搜尋頁數的網址List
+3. 直接爬取網址List之商品資料
+"""
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -14,13 +20,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from fake_useragent import UserAgent
 
-# 目標URL網址
-"""直接在蝦皮搜尋"""
-#url = "https://id.xiapibuy.com/search?keyword={0}&page={1}"
-"""在電腦配件中搜尋"""
-url = "https://id.xiapibuy.com/search?category=134&keyword={0}&page={1}"
-"""直接搜尋品牌"""
-url = "https://id.xiapibuy.com/search?attrId=14478&attrName=Merek&attrVal={0}&page={1}"
 
 def get_urls(url, query, start_page, end_page): 
     urls = []
@@ -107,7 +106,14 @@ def save_to_csv(items, file):
             writer.writerow(item)
 
 if __name__ == "__main__":
-    #print(get_resource(URL).history)
+    # 目標URL網址
+    """直接在蝦皮搜尋"""
+    #url = "https://id.xiapibuy.com/search?keyword={0}&page={1}"
+    """在電腦配件中搜尋"""
+    #url = "https://id.xiapibuy.com/search?category=134&keyword={0}&page={1}"
+    """直接搜尋品牌"""
+    url = "https://id.xiapibuy.com/search?attrId=14478&attrName=Merek&attrVal={0}&page={1}"
+
     print(get_resource(url).status_code)
 
     urls = get_urls(url, "genius", 1, 3)
@@ -116,7 +122,5 @@ if __name__ == "__main__":
     goods = web_scraping_bot(urls)
     df = pd.DataFrame(goods)       #用dataframe列出
     print(df)
-    #for good in goods:                #用list列出
-    #    print(good)
     
-    save_to_csv(goods, "Shoppe_Indonisia_ComputerAccessories_genius.csv")
+    save_to_csv(goods, "x.csv")

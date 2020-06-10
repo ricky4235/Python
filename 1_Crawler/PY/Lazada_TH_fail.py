@@ -32,7 +32,7 @@ def parse_html(html_str):
 
 def get_goods(soup):
     goods = []
-    rows = soup.find("div", "c1_t2i").find_all("div", class_="c2prKC")
+    rows = soup.find("div", "c1_t2i").find_all("div", class_="c5TXIP")
     
     for row in rows:
         try:
@@ -92,7 +92,7 @@ def save_to_csv(items, file):
             writer.writerow(item)
 
 if __name__ == "__main__":
-    urls = generate_urls(URL, 1, 3)  #得到1~3頁url的
+    urls = generate_urls(URL, 1, 1)  #得到1~3頁url的
     print(urls)
     goods = web_scraping_bot(urls) 
     df = pandas.DataFrame(goods)       #用dataframe列出

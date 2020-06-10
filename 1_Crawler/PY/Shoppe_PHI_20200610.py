@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue May 26 14:48:15 2020
+Created on Wed Jun 10 11:33:53 2020
 
 @author: 11004076
 """
 
+"""
+爬取【菲律賓蝦皮】搜尋頁面簡易商品資料_20200610完整版
+1. 使用針對蝦皮的headers = {"user-agent": "Googlebot"}取得解析網頁資料
+2. 先取得搜尋頁數的網址List
+3. 直接爬取網址List之商品資料
+"""
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -14,18 +20,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from fake_useragent import UserAgent
 
-# 目標URL網址
-"""直接在蝦皮搜尋"""
-#url = "https://ph.xiapibuy.com/search?keyword={0}&page={1}"
-"""在電腦配件中搜尋"""
-url = "https://ph.xiapibuy.com/search?category=18596&keyword={0}&subcategory=18613&page={1}"
-"""在電腦遊戲中搜尋"""
-#url = "https://ph.xiapibuy.com/search?category=20718&keyword={0}&subcategory=20729&page={1}"
 
 def get_urls(url, query, start_page, end_page): 
     urls = []
     for page in range(start_page, end_page+1):
-        urls.append(url.format(query, page))    #query帶入url的{0}、page帶入{1}
+        urls.append(url.format(query, page-1))    #query帶入url的{0}、page帶入{1}
     return urls
 
 def get_resource(url):
@@ -53,16 +52,12 @@ def get_goods(soup):
             price = None
             
         try:
-            Original_price = row.find("div", class_="_1w9jLI QbH7Ig U90Nhh").text.replace("₱","")
+            Original_price = row.find("div", class_="_1w9jLI QbH7Ig U90Nhh").text
         except:
             Original_price = None
 
         try:
-            sold = row.find("div", class_="_18SLBt").text.replace(" sold","")
-            #假如字串有包含K，將K取代掉，並將字串轉為浮點數，再乘以1000
-            if "K" in sold:
-                sold = sold.replace("K","")
-                sold = float(sold)*1000
+            sold = row.find("div", class_="_18SLBt").text
         except:
             sold = None
 
@@ -76,7 +71,7 @@ def get_goods(soup):
     return goods
 
 def web_scraping_bot(urls):
-    all_goods = [["品名","價格","原價","售出量", "網址"]]  #巢狀清單
+    all_goods = [["品名","價格(單位:千)","原價(單位:千)","售出量", "網址"]]  #巢狀清單
     page = 1
     
     for url in urls:
@@ -93,7 +88,7 @@ def web_scraping_bot(urls):
             now_page = soup.find("span", class_="shopee-mini-page-controller__current").text
             all_page = soup.find("span", class_="shopee-mini-page-controller__total").text
             if now_page == all_page:
-                break   #已經沒有下一頁            
+                break   #已經沒有下一頁
             time.sleep(5) 
         else:
             print("HTTP請求錯誤...")
@@ -107,16 +102,21 @@ def save_to_csv(items, file):
             writer.writerow(item)
 
 if __name__ == "__main__":
-    #print(get_resource(URL).history)
+    # 目標URL網址
+    """直接在蝦皮搜尋"""
+    #url = "https://ph.xiapibuy.com/search?keyword={0}&page={1}"
+    """在電腦配件中搜尋"""
+    url = "https://ph.xiapibuy.com/search?category=18596&keyword={0}&subcategory=18613&page={1}"
+    """在電腦遊戲中搜尋"""
+    #url = "https://ph.xiapibuy.com/search?category=20718&keyword={0}&subcategory=20729&page={1}"
+
     print(get_resource(url).status_code)
 
-    urls = get_urls(url, "genius", 0, 10)
+    urls = get_urls(url, "genius", 1, 3)
     print(urls)
 
     goods = web_scraping_bot(urls)
     df = pd.DataFrame(goods)       #用dataframe列出
     print(df)
-    #for good in goods:                #用list列出
-    #    print(good)
     
-    save_to_csv(goods, "Shoppe_Philippines_genius.csv")
+    save_to_csv(goods, "x.csv")
