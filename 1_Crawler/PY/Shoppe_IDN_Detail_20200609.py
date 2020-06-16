@@ -129,6 +129,7 @@ def get_goods(url):
 # 將每一個點入頁面的List依序爬取
 def scraping(urls):
     all_goods = [["name","price","Original_price","star","reviews","sold","stock","seller","seller_link","seller_from","category","brand","description", "URL"]]
+    
     for idx,i in enumerate(FindLinks(urls)):  #記錄目前進行的迴圈次數，配上總迴圈次數，可做為進度條使用。
         print("Crawing No." + str(idx+1) + " Item in Total:" + str(len(FindLinks(urls))) + "Item")
         
@@ -136,7 +137,6 @@ def scraping(urls):
         time.sleep(0.2)
         all_goods.append(goods)
     return all_goods
-
 #存成CSV
 def save_to_csv(items, file):
     with open(file, "w+", newline="", encoding="utf_8_sig") as fp:  #utf_8_sig:能讓輸出的csv正確顯示中文(utf_8會有亂碼)
