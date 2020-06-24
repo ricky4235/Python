@@ -33,6 +33,7 @@ def web_scraping_bot(urls):
     page = 1
     
     for url in urls:
+        
         print("sd: d" + str(page) + "html.")
         page = page + 1
         r = get_resource(url)
@@ -49,7 +50,7 @@ def web_scraping_bot(urls):
             print("HTTP request error...")
 
     return all_goods
-#
+
 def save_to_csv(items, file):
     with open(file, "w+", newline="", encoding="utf_8_sig") as fp:
         writer = csv.writer(fp)

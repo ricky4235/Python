@@ -149,11 +149,11 @@ if __name__ == "__main__":
     """直接在蝦皮搜尋"""
     #url = "https://id.xiapibuy.com/search?keyword={0}&page={1}"
     """在電腦配件中搜尋"""
-    #url = "https://id.xiapibuy.com/search?category=134&keyword={0}&page={1}"
+    url = "https://id.xiapibuy.com/search?category=134&keyword={0}&page={1}"
     """直接搜尋品牌"""
-    url = "https://id.xiapibuy.com/search?attrId=14478&attrName=Merek&attrVal={0}&page={1}"
+    #url = "https://id.xiapibuy.com/search?attrId=14478&attrName=Merek&attrVal={0}&page={1}"
     
-    urls = get_urls(url, "logitech", 0, 1)
+    urls = get_urls(url, "genius", 23, 25)
     
     m = scraping(urls)
     save_to_csv(m, "m.csv")

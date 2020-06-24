@@ -149,7 +149,7 @@ def save_to_csv(items, file):
 if __name__ == "__main__":
     #在電腦週邊搜尋+銷售中
     url = "https://vn.xiapibuy.com/search?category=13030&keyword={0}&page={1}&sortBy=sales"
-    urls = get_urls(url, "genius", 0, 1)
+    urls = get_urls(url, "genius", 21, 23)
     
     m = scraping(urls)
     save_to_csv(m, "m.csv")
