@@ -29,45 +29,6 @@ resp = requests.get(url + info, headers=headers)
 html = HTML(html=resp.text)
 a = html.find('a.product-list-item')
 
-"""
-# 挑選第一筆資料作為範例
-resp = requests.get('https://www.pcone.com.tw/' + a[0].attrs['href'], headers=headers)
-html = HTML(html=resp.text)
-
-
-# 店家名稱
-html.find('a.store-name', first = True).text
-# 店家商品數量
-html.find('div.store-val', first = False)[0].attrs['data-val']
-# 店家評價
-html.find('div.store-val', first = False)[1].attrs['data-val']
-# 店家出貨天數
-html.find('div.store-val', first = False)[2].attrs['data-val']
-# 店家回覆率
-html.find('div.store-val', first = False)[3].attrs['data-val']
-# 產品名稱
-html.find('h1.product-name', first = True).text
-# 特價
-html.find('span.bind-lowest-price.discount',first = True).text
-# 原價
-html.find('span.original', first = True).text
-# 折數
-html.find('span.bind-discount-number.discount-number', first = True).text
-# 商品評分
-html.find('span.count > span', first = False)[0].text
-# 評價人數
-html.find('span.count > span', first = False)[1].text
-# 收藏人數
-html.find('div.count', first = False)[0].text
-# 提問人數
-html.find('div.count', first = False)[1].text
-# 商品分類
-html.find('div.breadcrumbs-set', first = True).text
-# 商品標籤
-html.find('div.tags', first = True).text
-# 商品連結
-'https://www.pcone.com.tw' + a[0].attrs['href']
-"""
 
 # 定義ProdList函數，輸入商品分類編號，輸出該分類下所有商品連結
 def ProdList(info):
