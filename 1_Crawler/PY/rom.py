@@ -33,20 +33,20 @@ def web_scraping_bot(urls):
     page = 1
     
     for url in urls:
-        
+
         print("sd: d" + str(page) + "html.")
         page = page + 1
         r = get_resource(url)
         if r.status_code == requests.codes.ok:
             
             soup = parse_html(r.text)
-            goods = get_goods(soup)#
+            goods = get_goods(soup)
             all_goods = all_goods + goods
             print("wait 8 second...")
             if soup.find("li", class_="a-disabled a-last"):
                 break
             time.sleep(5)
-        else:#
+        else:
             print("HTTP request error...")
 
     return all_goods
@@ -56,7 +56,7 @@ def save_to_csv(items, file):
         writer = csv.writer(fp)
         for item in items:
             writer.writerow(item)
-
+#
 if __name__ == "__main__":
     urls = generate_urls(URL, 1, 3)  #爬取1~3頁
     print(urls)
@@ -72,10 +72,12 @@ if __name__ == "__main__":
     #這名原是那些憑人手在肉身上稱為受割禮之人所起的。 
 #12那時，你們與基督無關，在以色列國民以外，在所應許的諸約上是局外人，並且活在世上沒有指望，沒有神。 
 #13你們從前遠離神的人，如今卻在基督耶穌裏，靠着他的血，已經得親近了。
+    
 #14因他使我們和睦，將兩下合而為一，拆毀了中間隔斷的牆； 
-#15而且以自己的身體廢掉冤仇，就是那記在律法上的規條，為要將兩下藉着自己造成一個新人，如此便成就了和睦。 
+#15而且以自己的身體廢掉冤仇，就是那記在律法上的規條，為要將兩下藉着自己造成一個新人，如此便成就了和睦。
 #16既在十字架上滅了冤仇，便藉這十字架使兩下歸為一體，與神和好了， 
 #17並且來傳和平的福音給你們遠處的人，也給那近處的人。 
+    
 #18因為我們兩下藉着他被一個聖靈所感，得以進到父面前。
 #19這樣，你們不再作外人和客旅，是與聖徒同國，是神家裏的人了； 
 #20並且被建造在使徒和先知的根基上，有基督耶穌自己為房角石， 
