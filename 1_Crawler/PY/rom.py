@@ -56,7 +56,7 @@ def save_to_csv(items, file):
         writer = csv.writer(fp)
         for item in items:
             writer.writerow(item)
-#
+
 if __name__ == "__main__":
     urls = generate_urls(URL, 1, 3)  #爬取1~3頁
     print(urls)
