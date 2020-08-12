@@ -39,7 +39,6 @@ def web_scraping_bot(urls):
         r = get_resource(url)
         if r.status_code == requests.codes.ok:
             
-            
             soup = parse_html(r.text)
             goods = get_goods(soup)
             all_goods = all_goods + goods
@@ -50,7 +49,7 @@ def web_scraping_bot(urls):
         else:
 
             print("HTTP request error...")
-
+    
     return all_goods
 
 def save_to_csv(items, file):
@@ -58,7 +57,7 @@ def save_to_csv(items, file):
         writer = csv.writer(fp)
         for item in items:
             writer.writerow(item)
-
+#
 if __name__ == "__main__":
     urls = generate_urls(URL, 1, 3)  #爬取1~3頁
     print(urls)
