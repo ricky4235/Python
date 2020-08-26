@@ -30,12 +30,12 @@ def get_goods(soup):
 
 def web_scraping_bot(urls):
     all_goods = [["rank, name, star, reviews, price"]]
-    page = 1#
+    page = 1
     
     for url in urls:
 
         print("sd: d" + str(page) + "html.")
-        page = page + 1#
+        page = page + 1
         r = get_resource(url)
         if r.status_code == requests.codes.ok:
             
@@ -44,9 +44,9 @@ def web_scraping_bot(urls):
             all_goods = all_goods + goods
             print("wait 8 second...")
             if soup.find("li", class_="a-disabled a-last"):
-                break
+                break#
             time.sleep(5)
-        else:
+        else:#
             
             print("HTTP request error...")
     
