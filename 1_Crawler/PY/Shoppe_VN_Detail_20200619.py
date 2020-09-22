@@ -80,7 +80,7 @@ def get_goods(url):
         except:
             sold = None
             
-        try:
+        try:#
             #stock = row.select("._1FzU2Y .items-center div+ div")[0].get_text()
             stock = row.find("div", "flex items-center _1FzU2Y").get_text()
         except:
@@ -107,7 +107,7 @@ def get_goods(url):
         except:
             category = None
 
-        try:
+        try:#
             brand = row.select_one("._2H-513").get_text()
         except:
             brand = None
@@ -144,7 +144,7 @@ def save_to_csv(items, file):
         writer = csv.writer(fp)
         for item in items:
             writer.writerow(item)
-    
+
 # 開始爬蟲
 if __name__ == "__main__":
     #在電腦週邊搜尋+銷售中

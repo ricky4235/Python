@@ -19,7 +19,7 @@ import re
 # 輸入爬蟲網址與使用者資訊
 url = 'https://www.pcone.com.tw/product/'
 # 男生服飾
-info = '327' 
+info = '327'
 
 # 加入使用者資訊(如使用什麼瀏覽器、作業系統...等資訊)模擬真實瀏覽網頁的情況
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
