@@ -107,7 +107,7 @@ def get_goods(url):
         except:
             category = None
 
-        try:#
+        try:
             brand = row.select_one("._2H-513").get_text()
         except:
             brand = None
