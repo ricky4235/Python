@@ -117,10 +117,10 @@ def get_goods(url):
         except:
             description = None
             
-        try:
+        try:#
             URL = url
         except:
-            URL = None
+            URL = None#
             
         good= [name, price, Original_price, star, reviews, sold, stock, seller, seller_link, seller_from, category, brand, description, URL]
         goods.append(good)
