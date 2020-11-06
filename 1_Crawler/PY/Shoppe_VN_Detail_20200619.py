@@ -117,7 +117,7 @@ def get_goods(url):
         except:
             description = None
             
-        try:#
+        try:
             URL = url
         except:
             URL = None#

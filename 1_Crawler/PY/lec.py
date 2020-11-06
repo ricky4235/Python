@@ -23,6 +23,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 import itertools
 
+
 from keras.utils.np_utils import to_categorical 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D
@@ -31,66 +32,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ReduceLROnPlateau
 #
 
-sns.set(style='white', context='notebook', palette='deep') 
-
-
-transform的特性是同维操作，最后输出结果的顺序和原始数据在序号上完全匹配。
-features['LotFrontage'] = features.groupby('Neighborhood')['LotFrontage'].transform(lambda x: x.fillna(x.median()))
-
-
-#对于整型和浮点型数据列，使用0填充其中的空值。
-numeric_dtypes = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
-numerics = []
-for i in features.columns:
-    if features[i].dtype in numeric_dtypes:
-        numerics.append(i)
-features.update(features[numerics].fillna(0))
-###############################填充空值-【结束】##########################
-
-######################数字型数据列偏度校正-【开始】#######################
-#使用skew()方法，计算所有整型和浮点型数据列中，数据分布的偏度（skewness）。
-#偏度是统计数据分布偏斜方向和程度的度量，是统计数据分布非对称程度的数字特征。亦称偏态、偏态系数。 
-numeric_dtypes = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
-numerics2 = []
-for i in features.columns:
-    if features[i].dtype in numeric_dtypes:
-        numerics2.append(i)
-skew_features = features[numerics2].apply(lambda x: skew(x)).sort_values(ascending=False)
-
-#以0.5作为基准，统计偏度超过此数值的高偏度分布数据列，获取这些数据列的index。
-high_skew = skew_features[skew_features > 0.5]
-skew_index = high_skew.index
-
-#对高偏度数据进行处理，将其转化为正态分布。
-#Box和Cox提出的变换可以使线性回归模型满足线性性、独立性、方差齐次以及正态性的同时，又不丢失信息。
-for i in skew_index:
-    features[i] = boxcox1p(features[i], boxcox_normmax(features[i] + 1))#这是boxcox1p的使用方法，参数的具体意义暂时不解释
-######################数字型数据列偏度校正-【结束】#######################
-
-######################特征删除和融合创建新特征-【开始】###################
-#删除一些特征。df.drop（‘列名’, axis=1）代表将‘列名’对应的列标签（们）沿着水平的方向依次删掉。
-features = features.drop(['Utilities', 'Street', 'PoolQC',], axis=1)
-
-#融合多个特征，生成新特征。
-features['YrBltAndRemod']=features['YearBuilt']+features['YearRemodAdd']
-features['TotalSF']=features['TotalBsmtSF'] + features['1stFlrSF'] + features['2ndFlrSF']
-
-features['Total_sqr_footage'] = (features['BsmtFinSF1'] + features['BsmtFinSF2'] +
-                                 features['1stFlrSF'] + features['2ndFlrSF'])
-
-features['Total_Bathrooms'] = (features['FullBath'] + (0.5 * features['HalfBath']) +
-                               features['BsmtFullBath'] + (0.5 * features['BsmtHalfBath']))
-
-features['Total_porch_sf'] = (features['OpenPorchSF'] + features['3SsnPorch'] +
-                              features['EnclosedPorch'] + features['ScreenPorch'] +
-                              features['WoodDeckSF'])
-
-#简化特征。对于某些分布单调（比如100个数据中有99个的数值是0.9，另1个是0.1）的数字型数据列，进行01取值处理。
-features['haspool'] = features['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
-features['has2ndfloor'] = features['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
-features['hasgarage'] = features['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
-features['hasbsmt'] = features['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
-features['hasfireplace'] = features['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
 
 #检查特征处理后，特征矩阵的维数，核查特征处理结果。
 print("删除了3个特征，又融合创建了10个新特征，处理之后的特征矩阵维度为:",features.shape)
