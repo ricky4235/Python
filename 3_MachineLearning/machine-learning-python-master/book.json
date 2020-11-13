@@ -1,0 +1,15 @@
+{   "pdf": {"fontSize": 8},
+      "plugins": [
+    "header"
+      ],
+    "styles": {
+        "pdf": "styles/pdf.css"},
+    "pluginsConfig": {
+        "mathjax":{
+            "forceSVG": true
+        },
+        "layout": {
+          "headerPath" : "header.html"
+        }
+    }
+}
