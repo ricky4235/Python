@@ -312,8 +312,6 @@ df=pd.DataFrame(np.hstack((values.reshape(11,1),cmap_values)))
 df.columns = ['Value', 'R', 'G', 'B', 'Alpha']
 print(df)
 
-
-
 def dataset_fixed_cov():
     '''Generate 2 Gaussians samples with the same covariance matrix'''
     n, dim = 300, 2
@@ -323,6 +321,7 @@ def dataset_fixed_cov():
               np.dot(np.random.randn(n, dim), C) + np.array([1, 1])] 
     y = np.hstack((np.zeros(n), np.ones(n))) 
     return X, y
+
 
 def dataset_cov():
     '''Generate 2 Gaussians samples with different covariance matrices'''
@@ -337,17 +336,47 @@ def dataset_cov():
 
 from sklearn.decomposition import PCA
 
-pca = PCA(n_components=len(data)) 
+pca = PCA(n_components=len(data))
 pca.fit(data)
 
 plt.figure(figsize=(10, 8))
 
 
+from imblearn.combine import SMOTETomek
+kos = SMOTETomek(random_state=0)
+X_kos, y_kos = kos.fit_sample(X_train, y_train)
+print(''.format(Counter(y_kos)))
 
+
+y_train = train['cls'];        
+y_test = test['cls']
+X_train = train.loc[:, :'X5'];  
+X_test = test.loc[:, :'X5']
 
 from imblearn.combine import SMOTETomek
-kos = SMOTETomek(random_state=0)  # 综合采样
-X_kos, y_kos = kos.fit_sample(X_train, y_train)
-print('综合采样后，训练集 y_kos 中的分类情况：{}'.format(Counter(y_kos)))
-不难两种过采样方法都将原来 y_train 中的占比少的分类 1 提到了与 0 数量一致的情况
-但因为综合采样在过采样后会使用欠采样，所以数量会稍微少一点点
+
+import pandas as pd
+import numpy as np
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+large = 22; med = 16; small = 12
+params = {'axes.titlesize': large,
+          'legend.fontsize': med,
+          'figure.figsize': (16, 10),
+          'axes.labelsize': med,
+          'axes.titlesize': med,
+          'xtick.labelsize': med,
+          'ytick.labelsize': med,
+          'figure.titlesize': large}
+plt.rcParams.update(params)
+plt.style.use('seaborn-whitegrid')
+sns.set_style("white")
+
+
+df3 = df1[["序号.1","科目.1","成绩.1","排名.1"]]
+df3.columns = ["序号","科目","成绩","排名"]
+df3 = df3.loc[0:0]
+df3
