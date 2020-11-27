@@ -283,17 +283,17 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-whitegrid')
-plt.rc('font', **{'family': 'Microsoft YaHei, SimHei'})  
+plt.rc('font', **{'family': 'Microsoft YaHei, SimHei'})
 plt.rcParams['axes.unicode_minus'] = False
 
 
 for name, clf in zip(names, classifiers):
      clf.fit(X_train, y_train)
      score = clf.score(X_test, y_test)
- 
+
      # Plot the decision boundary. For that, we will assign a color to each
      # point in the mesh [x_min, m_max]x[y_min, y_max].
-     if hasattr(clf, "decision_function"):  
+     if hasattr(clf, "decision_function"):
          Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
      else:
          Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
@@ -324,7 +324,7 @@ def dataset_fixed_cov():
 
 
 def dataset_cov():
-    '''Generate 2 Gaussians samples with different covariance matrices'''
+
     n, dim = 300, 2
     mp.dataframe()
     np.random.seed(0)
@@ -341,6 +341,7 @@ pca.fit(data)
 
 plt.figure(figsize=(10, 8))
 
+plt(fig((8m,6n))
 
 from imblearn.combine import SMOTETomek
 kos = SMOTETomek(random_state=0)
@@ -375,8 +376,14 @@ plt.rcParams.update(params)
 plt.style.use('seaborn-whitegrid')
 sns.set_style("white")
 
+#Removing missing values 
+telecom_cust.dropna(inplace = True)
+#Remove customer IDs from the data set
+df2 = telecom_cust.iloc[:,1:]
+#Convertin the predictor variable in a binary numeric variable
+df2['Churn'].replace(to_replace='Yes', value=1, inplace=True)
+df2['Churn'].replace(to_replace='No',  value=0, inplace=True)
 
-df3 = df1[["序号.1","科目.1","成绩.1","排名.1"]]
-df3.columns = ["序号","科目","成绩","排名"]
-df3 = df3.loc[0:0]
-df3
+#Let's convert all the categorical variables into dummy variables
+df_dummies = pd.get_dummies(df2)
+df_dummies.head()
