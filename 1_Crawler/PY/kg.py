@@ -41,8 +41,8 @@ def ProdList(info):
 from sklearn.ensemble import RandomForestRegressor
 
 def set_Cabin_type(df):
-    df.loc[ (df.Cabin.notnull()), 'Cabin' ] = "Yes"
-    df.loc[ (df.Cabin.isnull()), 'Cabin' ] = "No"
+    df.loc[ (df.Cabin.notnull()) ] = "Yes"
+    df.loc[ (df.Cabin.isnull()) ] = "No"
     return df
 
 data_train, rfr = set_missing_ages(data_train) 
@@ -387,3 +387,99 @@ df2['Churn'].replace(to_replace='No',  value=0, inplace=True)
 #Let's convert all the categorical variables into dummy variables
 df_dummies = pd.get_dummies(df2)
 df_dummies.head()
+
+x_fearures = np.array([[-1, -2], [-2, -1], [-3, -2], [1, 3], [2, 1], [3, 2]])
+y_label = np.array([0, 0, 0, 1, 1, 1])
+
+
+lr_clf = LogisticRegression()
+
+
+from mpl_toolkits.mplot3d import Axes3D
+
+fig = plt.figure(figsize=(10,8))
+ax = fig.add_subplot(111, projection='3d')
+
+iris_all_class0 = iris_all[iris_all['target']==0].values
+iris_all_class1 = iris_all[iris_all['target']==1].values
+iris_all_class2 = iris_all[iris_all['target']==2].values
+# 'setosa'(0), 'versicolor'(1), 'virginica'(2)
+ax.scatter(iris_all_class0[:,0], iris_all_class0[:,1], iris_all_class0[:,2],label='setosa')
+ax.scatter(iris_all_class1[:,0], iris_all_class1[:,1], iris_all_class1[:,2],label='versicolor')
+ax.scatter(iris_all_class2[:,0], iris_all_class2[:,1], iris_all_class2[:,2],label='virginica')
+plt.legend()
+
+k_list = [1, 3, 5, 8, 10, 15]
+h = .02
+# 创建不同颜色的画布
+cmap_light = ListedColormap(['orange', 'cyan', 'cornflowerblue'])
+cmap_bold = ListedColormap(['darkorange', 'c', 'darkblue'])
+
+plt.figure(figsize=(15,14))
+# 根据不同的k值进行可视化
+for ind,k in enumerate(k_list):
+    clf = KNeighborsClassifier(k)
+    clf.fit(X, y)
+    # 画出决策边界
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                         np.arange(y_min, y_max, h))
+    Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+    # 根据边界填充颜色
+    Z = Z.reshape(xx.shape)
+
+    plt.subplot(321+ind)  
+    plt.pcolormesh(xx, yy, Z, cmap=cmap_light)
+    # 数据点可视化到画布
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap=cmap_bold,
+                edgecolor='k', s=20)
+    plt.xlim(xx.min(), xx.max())
+    plt.ylim(yy.min(), yy.max())
+    plt.title("3-Class classification (k = %i)"% k)
+
+plt.show()
+
+plt.figure(figsize=(10,20))
+for i, k in enumerate(n_neighbors):
+
+    clf = KNeighborsRegressor(n_neighbors=k, p=2, metric="minkowski")
+    # 训练
+    clf.fit(X, y)
+    # 预测
+    y_ = clf.predict(T)
+    plt.subplot(6, 1, i + 1)
+    plt.scatter(X, y, color='red', label='data')
+    plt.plot(T, y_, color='navy', label='prediction')
+    plt.axis('tight')
+    plt.legend()
+    plt.title("KNeighborsRegressor (k = %i)" % (k))
+
+plt.tight_layout()
+plt.show()
+
+
+import numpy as np
+import pandas as pd
+# kNN分类器
+from sklearn.neighbors import KNeighborsClassifier
+# kNN数据空值填充
+from sklearn.impute import KNNImputer理
+# 计算带有空值的歐氏(歐幾里得)距離
+from sklearn.metrics.pairwise import nan_euclidean_distances
+# 交叉验证
+from sklearn.model_selection import cross_val_score
+# KFlod的函数
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.pipeline import Pipeline
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+
+X = [[1, 2, np.nan], [3, 4, 3], [np.nan, 6, 5], [8, 8, 7]]
+imputer = KNNImputer(n_neighbors=2, metric='nan_euclidean')
+imputer.fit_transform(X)
+
+带有空值的欧式距离计算公式
+
+nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2, np.nan], [8, 8, 7]])
+nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2, np.nan], [8, 8, 7]])
