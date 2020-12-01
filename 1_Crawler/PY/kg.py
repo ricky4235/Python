@@ -420,18 +420,17 @@ plt.figure(figsize=(15,14))
 for ind,k in enumerate(k_list):
     clf = KNeighborsClassifier(k)
     clf.fit(X, y)
-    # 画出决策边界
+
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                          np.arange(y_min, y_max, h))
     Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
-    # 根据边界填充颜色
     Z = Z.reshape(xx.shape)
 
     plt.subplot(321+ind)  
     plt.pcolormesh(xx, yy, Z, cmap=cmap_light)
-    # 数据点可视化到画布
+
     plt.scatter(X[:, 0], X[:, 1], c=y, cmap=cmap_bold,
                 edgecolor='k', s=20)
     plt.xlim(xx.min(), xx.max())
@@ -464,8 +463,8 @@ import pandas as pd
 # kNN分类器
 from sklearn.neighbors import KNeighborsClassifier
 # kNN数据空值填充
-from sklearn.impute import KNNImputer理
-# 计算带有空值的歐氏(歐幾里得)距離
+from sklearn.impute import KNNImputer
+
 from sklearn.metrics.pairwise import nan_euclidean_distances
 # 交叉验证
 from sklearn.model_selection import cross_val_score
@@ -479,7 +478,32 @@ X = [[1, 2, np.nan], [3, 4, 3], [np.nan, 6, 5], [8, 8, 7]]
 imputer = KNNImputer(n_neighbors=2, metric='nan_euclidean')
 imputer.fit_transform(X)
 
-带有空值的欧式距离计算公式
+nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2, np.nan], [8, 8, 7]])
+nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2,
+                         
+# load dataset, 将?变成空值
+input_file = './horse-colic.csv'
+df_data = pd.read_csv(input_file, header=None, na_values='?')
 
-nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2, np.nan], [8, 8, 7]])
-nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2, np.nan], [8, 8, 7]])
+# 得到训练数据和label, 第23列表示是否发生病变, 1: 表示Yes; 2: 表示No. 
+data = df_data.values
+ix = [i for i in range(data.shape[1]) if i != 23]
+X, y = data[:, ix], data[:, 23]
+
+# 查看所有特征的缺失值个数和缺失率
+for i in range(df_data.shape[1]):
+    n_miss = df_data[[i]].isnull().sum()
+    perc = n_miss / df_data.shape[0] * 100
+    if n_miss.values[0] > 0:
+        print('>Feat: %d, Missing: %d, Missing ratio: (%.2f%%)' % (i, n_miss, perc))
+
+# 查看总的空值个数
+print('KNNImputer before Missing: %d' % sum(np.isnan(X).flatten()))
+# 定义 knnimputer
+imputer = KNNImputer()
+# 填充数据集中的空值
+imputer.fit(X)
+# 转换数据集
+Xtrans = imputer.transform(X)
+# 打印转化后的数据集的空值
+print('KNNImputer after Missing: %d' % sum(np.isnan(Xtrans).flatten()))
