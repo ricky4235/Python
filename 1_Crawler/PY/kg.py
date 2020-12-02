@@ -443,16 +443,15 @@ plt.figure(figsize=(10,20))
 for i, k in enumerate(n_neighbors):
 
     clf = KNeighborsRegressor(n_neighbors=k, p=2, metric="minkowski")
-    # 训练
-    clf.fit(X, y)
-    # 预测
+
     y_ = clf.predict(T)
     plt.subplot(6, 1, i + 1)
     plt.scatter(X, y, color='red', label='data')
     plt.plot(T, y_, color='navy', label='prediction')
     plt.axis('tight')
     plt.legend()
-    plt.title("KNeighborsRegressor (k = %i)" % (k))
+    plt.title("KNeighborsRegressor (k = %i)" 
+              % (k))
 
 plt.tight_layout()
 plt.show()
@@ -481,29 +480,39 @@ imputer.fit_transform(X)
 nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2, np.nan], [8, 8, 7]])
 nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2,
                          
-# load dataset, 将?变成空值
+
 input_file = './horse-colic.csv'
 df_data = pd.read_csv(input_file, header=None, na_values='?')
 
-# 得到训练数据和label, 第23列表示是否发生病变, 1: 表示Yes; 2: 表示No. 
+
 data = df_data.values
 ix = [i for i in range(data.shape[1]) if i != 23]
 X, y = data[:, ix], data[:, 23]
 
-# 查看所有特征的缺失值个数和缺失率
+
 for i in range(df_data.shape[1]):
     n_miss = df_data[[i]].isnull().sum()
     perc = n_miss / df_data.shape[0] * 100
     if n_miss.values[0] > 0:
         print('>Feat: %d, Missing: %d, Missing ratio: (%.2f%%)' % (i, n_miss, perc))
 
-# 查看总的空值个数
+
 print('KNNImputer before Missing: %d' % sum(np.isnan(X).flatten()))
-# 定义 knnimputer
+
 imputer = KNNImputer()
-# 填充数据集中的空值
 imputer.fit(X)
-# 转换数据集
 Xtrans = imputer.transform(X)
-# 打印转化后的数据集的空值
+
 print('KNNImputer after Missing: %d' % sum(np.isnan(Xtrans).flatten()))
+#
+# 模拟数据
+rng = np.random.RandomState(1)
+# 随机生成600个100维的数据，每一维的特征都是[0, 4]之前的整数
+X = rng.randint(5, size=(600, 100))
+y = np.array([1, 2, 3, 4, 5, 6] * 100)
+data = np.c_[X, y]
+# X和y进行整体打散
+random.shuffle(data)
+X = data[:,:-1]
+y = data[:, -1]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
