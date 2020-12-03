@@ -493,6 +493,7 @@ X, y = data[:, ix], data[:, 23]
 for i in range(df_data.shape[1]):
     n_miss = df_data[[i]].isnull().sum()
     perc = n_miss / df_data.shape[0] * 100
+    
     if n_miss.values[0] > 0:
         print('>Feat: %d, Missing: %d, Missing ratio: (%.2f%%)' % (i, n_miss, perc))
 
@@ -504,15 +505,67 @@ imputer.fit(X)
 Xtrans = imputer.transform(X)
 
 print('KNNImputer after Missing: %d' % sum(np.isnan(Xtrans).flatten()))
-#
-# 模拟数据
-rng = np.random.RandomState(1)
-# 随机生成600个100维的数据，每一维的特征都是[0, 4]之前的整数
-X = rng.randint(5, size=(600, 100))
-y = np.array([1, 2, 3, 4, 5, 6] * 100)
-data = np.c_[X, y]
-# X和y进行整体打散
-random.shuffle(data)
-X = data[:,:-1]
-y = data[:, -1]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+import numpy as np
+from sklearn.metrics import confusion_matrix
+y_pred = [0, 1, 0, 1]
+y_true = [0, 1, 1, 0]
+
+chi2
+from sklearn.preprocessing import MinMaxScaler
+import xgboost as xgb
+import lightgbm as lgb
+from catboost import CatBoostRegressor
+import warnings
+from sklearn.model_selection import StratifiedKFold, KFold
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, log_loss
+warnings.filterwarnings('ignore')
+
+numerical_fea = list(data_train.select_dtypes(exclude=['object']).columns)
+category_fea = list(filter(lambda x: x not in numerical_fea,list(data_train.columns)))
+label = 'isDefault'
+numerical_fea.remove(label)
+
+for data in [data_train, data_test_a]:
+    data['issueDate'] = pd.to_datetime(data['issueDate'],format='%Y-%m-%d')
+    startdate = datetime.datetime.strptime('2007-06-01', '%Y-%m-%d')
+
+    data['issueDateDT'] = data['issueDate'].apply(lambda x: x-startdate).dt.days
+
+def find_outliers_by_3segama(data,fea):
+    data_std = np.std(data[fea])
+    data_mean = np.mean(data[fea])
+    outliers_cut_off = data_std * 3
+    lower_rule = data_mean - outliers_cut_off
+    upper_rule = data_mean + outliers_cut_off
+    data[fea+'_outliers'] = data[fea].apply(lambda x:str('异常值') if x > upper_rule or x < lower_rule else '正常值')
+    return data
+
+
+
+留出法是直接將數據集D劃分為兩個互斥的集合，其中一個集合作為訓練集S，
+另一個作為測試集T。需要注意的是在劃分的時候要盡可能保證數據分佈的一致性，
+即避免因數據劃分過程引入額外的偏差而對最終結果產生影響。為了保證數據分佈的一致性，
+通常我們採用分層採樣的方式來對數據進行採樣。
+
+Tips：通常，會將數據集D中大約2/3~4/5的樣本作為訓練集，其餘的作為測試集。
+
+②交叉驗證法
+
+k折交叉驗證通常將數據集D分為k份，其中k-1份作為訓練集，剩餘的一份作為測試集，這樣就可以獲得k組訓練/測試集，可以進行k次訓練與測試，最終返回的是k個測試結果的均值。交叉驗證中數據集的劃分依然是依據分層採樣的方式來進行。
+
+對於交叉驗證法，其k值的選取往往決定了評估結果的穩定性和保真性，通常k值選取10。
+
+當k=1的時候，我們稱之為留一法
+
+③自助法
+
+我們每次從數據集D中取一個樣本作為訓練集中的元素，然後把該樣本放回，重複該行為m次，這樣我們就可以得到大小為m的訓練集，在這裡面有的樣本重複出現，有的樣本則沒有出現過，我們把那些沒有出現過的樣本作為測試集。
+
+進行這樣採樣的原因是因為在D中約有36.8%的數據沒有在訓練集中出現過。留出法與交叉驗證法都是使用分層採樣的方式進行數據採樣與劃分，而自助法則是使用有放回重複採樣的方式進行數據採樣
+
+數據集劃分總結
+
+對於數據量充足的時候，通常採用留出法或者k折交叉驗證法來進行訓練/測試集的劃分；
+對於數據集小且難以有效劃分訓練/測試集時使用自助法；
+對於數據集小且可有效劃分的時候最好使用留一法來進行劃分，因為這種方法最為準確
