@@ -524,6 +524,7 @@ warnings.filterwarnings('ignore')
 numerical_fea = list(data_train.select_dtypes(exclude=['object']).columns)
 category_fea = list(filter(lambda x: x not in numerical_fea,list(data_train.columns)))
 label = 'isDefault'
+feature = ''
 numerical_fea.remove(label)
 
 for data in [data_train, data_test_a]:
@@ -531,41 +532,63 @@ for data in [data_train, data_test_a]:
     startdate = datetime.datetime.strptime('2007-06-01', '%Y-%m-%d')
 
     data['issueDateDT'] = data['issueDate'].apply(lambda x: x-startdate).dt.days
-
+def logistic()
 def find_outliers_by_3segama(data,fea):
     data_std = np.std(data[fea])
     data_mean = np.mean(data[fea])
     outliers_cut_off = data_std * 3
-    lower_rule = data_mean - outliers_cut_off
-    upper_rule = data_mean + outliers_cut_off
-    data[fea+'_outliers'] = data[fea].apply(lambda x:str('异常值') if x > upper_rule or x < lower_rule else '正常值')
-    return data
+
+
+import warnings
+warnings.filterwarnings('ignore')
+import itertools
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from sklearn import datasets
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB 
+from sklearn.ensemble import RandomForestClassifier
+from mlxtend.classifier import StackingClassifier
+from sklearn.model_selection import cross_val_score, train_test_split
+from mlxtend.plotting import plot_learning_curves
+from mlxtend.plotting import plot_decision_regions
+
+
+Dataframe(X,y) = ()
 
 
 
-留出法是直接將數據集D劃分為兩個互斥的集合，其中一個集合作為訓練集S，
-另一個作為測試集T。需要注意的是在劃分的時候要盡可能保證數據分佈的一致性，
-即避免因數據劃分過程引入額外的偏差而對最終結果產生影響。為了保證數據分佈的一致性，
-通常我們採用分層採樣的方式來對數據進行採樣。
+clf1 = KNeighborsClassifier(n_neighbors=1)
+clf2 = RandomForestClassifier(random_state=1)
+clf3 = GaussianNB()
+lr = LogisticRegression()
+sclf = StackingClassifier(classifiers=[clf1, clf2, clf3], 
+                          meta_classifier=lr)
 
-Tips：通常，會將數據集D中大約2/3~4/5的樣本作為訓練集，其餘的作為測試集。
 
-②交叉驗證法
+label = ['KNN', 'Random Forest', 'Naive Bayes', 'Stacking Classifier']
+clf_list = [clf1, clf2, clf3, sclf]
+    
+fig = plt.figure(figsize=(10,8))
+gs = gridspec.GridSpec(2, 2)
+grid = itertools.product([0,1],repeat=2)
 
-k折交叉驗證通常將數據集D分為k份，其中k-1份作為訓練集，剩餘的一份作為測試集，這樣就可以獲得k組訓練/測試集，可以進行k次訓練與測試，最終返回的是k個測試結果的均值。交叉驗證中數據集的劃分依然是依據分層採樣的方式來進行。
 
-對於交叉驗證法，其k值的選取往往決定了評估結果的穩定性和保真性，通常k值選取10。
+clf_cv_mean = []
+clf_cv_std = []
+for clf, label, grd in zip(clf_list, label, grid):
+        
+    scores = cross_val_score(clf, X, y, cv=5, scoring='accuracy')
+    print("Accuracy: %.2f (+/- %.2f) [%s]" %(scores.mean(), scores.std(), label))
+    clf_cv_mean.append(scores.mean())
+    clf_cv_std.append(scores.std())
+        
+    clf.fit(X, y)
+    ax = plt.subplot(gs[grd[0], grd[1]])
+    fig = plot_decision_regions(X=X, y=y, clf=clf)
+    plt.title(label)
 
-當k=1的時候，我們稱之為留一法
-
-③自助法
-
-我們每次從數據集D中取一個樣本作為訓練集中的元素，然後把該樣本放回，重複該行為m次，這樣我們就可以得到大小為m的訓練集，在這裡面有的樣本重複出現，有的樣本則沒有出現過，我們把那些沒有出現過的樣本作為測試集。
-
-進行這樣採樣的原因是因為在D中約有36.8%的數據沒有在訓練集中出現過。留出法與交叉驗證法都是使用分層採樣的方式進行數據採樣與劃分，而自助法則是使用有放回重複採樣的方式進行數據採樣
-
-數據集劃分總結
-
-對於數據量充足的時候，通常採用留出法或者k折交叉驗證法來進行訓練/測試集的劃分；
-對於數據集小且難以有效劃分訓練/測試集時使用自助法；
-對於數據集小且可有效劃分的時候最好使用留一法來進行劃分，因為這種方法最為準確
+plt.show()
