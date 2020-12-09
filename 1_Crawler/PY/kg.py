@@ -563,6 +563,7 @@ grid = itertools.product([0,1],repeat=2)
 clf_cv_mean = []
 clf_cv_std = []
 for clf, label, grd in zip(clf_list, label, grid):
+    f_scores
 
     scores = cross_val_score(clf, X, y, cv=5, scoring='accuracy')
     print("Accuracy: %.2f (+/- %.2f) [%s]" %(scores.mean(), scores.std(), label))
@@ -575,13 +576,332 @@ for clf, label, grd in zip(clf_list, label, grid):
     plt.title(label)
 
 plt.show()
+# 種類 2 種以下的類別型欄位轉標籤編碼 (Label Encoding)
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+le_count = 0
 
-。
+# 檢查每一個 column
+for col in app_train:
+    if app_train[col].dtype == 'object':
+        # 如果只有兩種值的類別型欄位
+        if len(list(app_train[col].unique())) <= 2:
+            # 就做 Label Encoder
+            le.fit(app_train[col])
+            app_train[col] = le.transform(app_train[col])
+            app_test[col] = le.transform(app_test[col])
+            
+            # 紀錄有多少個 columns 被標籤編碼過
+            le_count += 1
+            
+# 標籤編碼 (2種類別) 欄位轉 One Hot Encoding            
+app_train = pd.get_dummies(app_train)
+app_test = pd.get_dummies(app_test)
+
+# 受雇日數為異常值的資料, 另外設一個欄位記錄, 並將異常的日數轉成空值 (np.nan)
+app_train['DAYS_EMPLOYED_ANOM'] = app_train["DAYS_EMPLOYED"] == 365243
+app_train['DAYS_EMPLOYED'].replace({365243: np.nan}, inplace = True)
+app_test['DAYS_EMPLOYED_ANOM'] = app_test["DAYS_EMPLOYED"] == 365243
+app_test["DAYS_EMPLOYED"].replace({365243: np.nan}, inplace = True)
+
+# 出生日數 (DAYS_BIRTH) 取絕對值 
+app_train['DAYS_BIRTH'] = abs(app_train['DAYS_BIRTH'])
+app_test['DAYS_BIRTH'] = abs(app_test['DAYS_BIRTH'])
+
+
+——有無缺失值，涉及缺失值的處理問題；特徵過多，可能需要採用PCA進行降維等。
+
+（2）數據的各特徵值是什麼類型？是字符串嗎？是離散的還是連續的？
+
+——涉及數據類型轉換問題，可能需要獨熱編碼或者數據格式轉換（如時間格式）
+
+（3）探索數據的統計信息，最值、四分位數、均值、方差
+
+——涉及是否需要歸一化或標準化
+
+
+
+3、數據可視化
+
+——可參考matplotlib和seaborn庫筆記
+
+如果特徵不是很多，可以嘗試挨個變量進行觀察（可視化）和處理。
+
+單個變量：連續性、分佈情況，包括偏度（skewness）和峰度（kurtosis）
+
+——是否需要標準化，是否是偏斜數據集。
+
+sns.distplot(train_raw['Sales'], kde=False) #分布图
+train_raw['CompetitionOpenSinceMonth'].value_counts(dropna=False) #不同取值的数量
+兩個變量：相關性
+
+——一般是和標籤/目標變量的相關性或者目標變量的時間變化趨勢。
+
+sns.barplot(x='DayOfWeek', y='Sales', data=train_raw)  #条形图看相关性
+plt.plot(train_raw['Date'],train_raw['Sales'])  #折线图看时间趋势
+多個變量：可以簡單回歸一下
+
+——初步判斷一下哪幾個特徵比較多的解釋了目標變量的變化。
+
+
+
+二、數據預處理、特徵工程
+（一）數據預處理
+數據預處理過程是完全應對上一步探索數據集而來，甚至很多時候是邊探索邊順手處理。
+
+1、重複值處理
+
+重複值分為兩類：
+
+（1）重複的值沒有意義，需要去重。
+
+# 判断重复数据
+isDuplicated = df.duplicated() # 判断重复数据记录
+print (isDuplicated) # 打印输出
+# 删除重复值
+new_df1 = df.drop_duplicates() # 删除数据记录中所有列值相同的记录
+new_df2 = df.drop_duplicates(['col1']) # 删除数据记录中col1值相同的记录
+new_df3 = df.drop_duplicates(['col2']) # 删除数据记录中col2值相同的记录
+new_df4 = df.drop_duplicates(['col1', 'col2']) # 删除数据记录中指定列（col1/col2）值相同的记录
+（2）重複值是有意義的，不需要去重，包括：
+
+假重複：比如有兩個數據點，其某個特徵值是相同的（比如蘋果和小米都是手機）。比如數據庫中某條記錄因為公司在規則上進行了改變，你可以刪除原記錄進行重新添加，也可以保留原記錄（出於以後還會用到，會保留），再添加一條新的，這樣這個數據點也算是重複了。
+重複的記錄用於樣本不均衡處理：在開展分類數據建模工作時，樣本不均衡是影響分類模型效果的關鍵因素之一，解決分類方法的一種方法是對少數樣本類別做簡單過採樣，通過隨機過採樣採取簡單複製樣本的策略來增加少數類樣本。經過這種處理方式後，也會在數據記錄中產生相同記錄的多條數據。此時，我們不能對其中重複值執行去重操作。
+重複的記錄用於檢測（發現）業務規則中的問題：對於以分析應用為主的數據集而言，存在重複記錄不會直接影響實際運營，畢竟數據集主要用來做分析；但對於事務型的數據而言，重複數據可能意味著重大運營規則問題，尤其當這些重複值出現在與企業經營中金錢相關的業務場景中，例如重複的訂單、重複的充值、重複的預約項、重複的出庫申請等。這些重複的數據記錄通常是由於數據採集、存儲、驗證和審核機制的不完善等問題導致的，會直接反映到前台生產和運營系統。以重複訂單為例，假如前台的提交訂單功能不做唯一性約束，那麼在一次訂單中重複點擊提交訂單按鈕，就會觸發多次重複提交訂單的申請記錄，如果該操作審批通過後，會聯動帶動運營後端的商品分揀、出庫、送貨，如果用戶接收重複商品則會導致重大損失；如果用戶退貨則會增加反向訂單，並影響物流、配送和倉儲相關的各個運營環節，導致運營資源無端消耗、商品損耗增加、倉儲物流成本增加等問題。因此，這些問題必須在前期數據採集和存儲時就通過一定機制解決和避免。如果確實產生了此類問題，那麼數據工作者或運營工作者可以基於這些重複值來發現規則漏洞，並配合相關部門最大限度降低給企業帶來的運營風險。
+
+
+2、缺失值（Nan）處理
+
+知乎
+
+有缺失值的特徵會給模型帶來極大的噪音，對學習造成較大的干擾。
+
+發現缺失值的時候，首先需要理解缺失背後的原因是什麼：
+
+是數據庫的技術問題還是真正業務的原因導致它缺失？
+
+如果是後者業務原因導致缺失，再來考慮怎麼處理缺失值，處理缺失值的方法有兩類：刪除和填充。
+
+（1）直接刪除法
+
+先看一下這個特徵的缺失率如何：
+
+data.isnull().sum  #统计所有各列各自共有多少缺失值
+如果缺失的數量很多，而又沒有證據表明這個特徵很重要，那麼可將這列直接刪除，否則會因為較大的noise對結果造成不良影響。
+
+設定閾值為1%，即保留非缺失值比例大於1%的列（只有缺失比例大於99%才刪除）：
+
+train_B_info = train_B.describe()
+meaningful_col = []
+for col in train_B_info.columns: 
+    if train_B_info.ix[0,col] > train_B.shape[0] * 0.01:
+           meaningful_col.append(col)
+train_B_1 = train_B[meaningful_col].copy()
+# 这里有一个技巧，因为train_B_info的第一行（索引为0）是count，train_B_info.ix[0,col]就是col这一列的count（这一列有多少非缺失值），而train_B.shape[0]即数据点个数（行数）。但是此法只适合数值列，字符串列就不行了，因为字符串不能被describe统计。
+如果缺失的數量非常少，而且數據不是時間序列那種必須連續的，那麼可以將缺失值對應的樣本刪除：
+
+test_raw[test_raw['Open'].isnull().values==True] # 因为缺失的较少，可以展示一下该列都有哪几行是缺失的
+（2）填充法
+
+通過已有的數據對缺失值進行填補：針對數據的特點，選擇用0、最大值、均值、中位數等填充。缺點是效果一般，因為等於人為增加了噪聲。
+
+# 特殊值填充
+train_B_1 = train_B_1.fillna(-999)
+# 中位数填充
+store_df["CompetitionDistance"].fillna(store_df["CompetitionDistance"].median()) 
+# 前向后向填充
+data_train.fillna(method='pad')  #用前一个值填充
+data_train.fillna(method='bfill')  #用后一个值填充
+# 插值填补（通过两点估计中间点的值）
+data_train.interpolate() 
+# 可以指定方法：interpolate('linear')，线性填充
+（3）建立一個模型“預測”缺失的數據
+
+比如KNN, Matrix completion等方法，即用其他特徵做預測模型來算出缺失特徵。缺點是如果缺失變量與其他變量之間沒有太大相關，那麼仍然無法準確預測。
+
+（4）把特徵映射到高維空間（虛擬變量）
+
+比如性別有男、女、缺失三種情況，則映射成3個變量：是否男、是否女、是否缺失。缺點是連續型變量維度過高，計算量很大，而且在數據量不足時會有稀疏性問題。
+
+（5）選擇不受缺失值影響的模型
+
+
+
+3、異常值分析
+
+——詳細內容見本專欄異常值檢測筆記。
+
+需注意：異常值檢測有兩種應用，一是作為一個獨立的過程，識別異常的事件或對象；二是作為數據預處理過程的一部分：被看作噪音，識別後還需要進行後續處理（後續處理也見該文）。此處為第二種用途。
 
 
 
 4、格式轉換
+
 涉及對字符串類型的數值的處理，可以進行數據類型轉換和顆粒度變換。
+
 數據類型轉換：比如字符串轉換為時間格式；
+
 data1['Date'] = pd.to_datetime(data1['Date'])
-顆粒度變換：比如時間序列數據的平滑顯示（按天顯示變按月顯示）
+顆粒度變換：比如時間序列數據的平滑顯示（按天顯示變按月顯示）；
+
+# 创建新数据集temp，将原数据集的时间列提取出来，作为新数据集的索引。然后对索引进行操作
+index = data1['Date']
+temp = data1['Sales']
+temp.index = index
+temp = temp.to_period('M')
+temp.groupby(level=0).mean()
+# level=0，以索引为依据进行分组
+
+
+
+
+5、離散化、二元化/獨熱編碼（One-Hot Encoding）
+
+如果特徵/屬性的取值本來就是分類的，那麼可以直接使用下面的方法，如果是連續的，則需要先進行離散化，比如年齡屬性的取值是連續的，可以人為分組為小於20歲、 20-60歲、大於60歲三組。
+
+（1）直接替換（映射）
+
+有時只需直接將非數值特徵替換為數值特徵：
+
+比如標籤有兩種類別（"<=50K"和">50K"），可以直接將他們編碼成兩個類0和1。
+
+income = income_raw.replace(['<=50K','>50K'],[0,1])
+# 也可以先在外面写成字典形式再传入replace函数
+比如屬性值之間存在序（order）的關係，高、中、低，可直接通過連續化編碼為1,0.5,0。
+
+（2）啞變量/虛擬變量（dummy variable）
+
+將分類變量轉換為“啞變量矩陣”或“指標矩陣”：
+
+
+用pandas.get_dummies()函數：
+
+dummies = pd.get_dummies(user_clu['constellation'])
+user_clu = pd.merge(user_clu, dummies,left_index=True,right_index=True)
+user_clu = user_clu.drop('constellation',1)
+用sklearn preprocessing模塊中的LabelBinarizer函數（標籤二值化函數）：
+
+import numpy as np
+from sklearn import preprocessing
+# Example labels 示例 labels
+labels = np.array([1,5,3,2,1,4,2,1,3])
+# Create the encoder 创建编码器
+lb = preprocessing.LabelBinarizer()
+# Here the encoder finds the classes and assigns one-hot vectors  # 编码器找到类别并分配 one-hot 向量
+lb.fit(labels)
+# And finally, transform the labels into one-hot encoded vectors # 最后把目标（lables）转换成独热编码的（one-hot encoded）向量
+lb.transform(labels)
+
+
+
+
+6、特徵縮放（scaling）：歸一化/標準化/對數轉換
+
+也就是所謂的無量綱化，使不同規格的數據轉換到同一規格。
+
+特徵縮放分兩種：一種是線性縮放，直接把數據壓縮到0-1之間；另一種是如果數據不是正態分佈的，尤其是數據的平均數和中位數相差很大的時候（表示特徵取值非常歪斜），這時通常用一個非線性的縮放。（尤其是對於金融數據）
+
+二者區別：一是對行處理，一是對列處理；一是線性縮放，一是非線性縮放。
+
+不受特徵縮放影響的算法
+
+需要縮放的：logistic回歸、SVM、K均值聚類
+
+不需要縮放的：決策樹、NB
+
+6.1 歸一化（normalization）（centering）
+
+線性縮放，直接把數據壓縮到0-1之間。
+
+（1）sklearn中的最大最小值縮放器（MinMaxScaler）
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+numerical = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
+features_raw[numerical] = scaler.fit_transform(data[numerical])
+（2）手動設置：
+
+(x-np.min(x))/(np.max(x)-np.min(x)) 
+6.2 標準化（standardization）
+
+
+對於特徵值的取值不均勻的特徵，可將其取值分佈轉換為均值為0 ，方差為1的正態分佈。因為正態分佈的簡寫也是norm，因此很多地方將數據的標準化同樣叫normalization。
+
+（1）Box-Cox變換/對數轉換
+
+將數據轉換成對數，這樣非常大和非常小的值不會對學習算法產生負面的影響。並且使用對數變換顯著降低了由於異常值所造成的數據范圍異常。
+
+skewed = ['capital-gain', 'capital-loss']
+features_raw[skewed] = data[skewed].apply(lambda x: np.log(x + 1))
+——注意：因為0的對數是沒有定義的，所以我們必須先將數據處理成一個比0稍微大一點的數以成功完成對數轉換。
+
+進行過對數轉換的數據，預測完之後如需恢復：
+
+np.expm1(predictions)
+# 如果没有+1就是：np.exp
+（2）sklearn中的方法
+
+from sklearn.preprocessing import StandardScaler
+StandardScaler().fit_transform(iris.data)
+
+
+7、樣本不均衡問題：傾斜數據集處理
+
+——傾斜數據集與特徵分佈的偏斜不同
+
+通過data.value_counts()函數可以看目標變量（標籤）的不同取值的數量，如果兩類樣本，一類樣本佔絕大多數，另一類則佔極少數，那麼就是樣本不均衡問題。現實中，比如處理信用卡欺詐問題（交易數據異常檢測），就會面臨這樣一個情況。
+
+——異常值問題，是特徵或標籤都可能異常，這裡專指標籤的取值異常。
+
+解決辦法：下採樣和過採樣。
+
+（1）下採樣（under sample）：
+
+讓兩類樣本同樣少。正例有1萬條，負例有100條，那就從正例中選擇100條和負例搭配。（僅針對訓練過程而言，測試集還是用原來的未下採樣的）
+
+# Number of data points in the minority class
+number_records_fraud = len(data[data.Class == 1])
+fraud_indices = np.array(data[data.Class == 1].index)
+
+# Picking the indices of the normal classes
+normal_indices = data[data.Class == 0].index
+
+# Out of the indices we picked, randomly select "x" number (number_records_fraud)
+random_normal_indices = np.random.choice(normal_indices, number_records_fraud, replace = False)
+random_normal_indices = np.array(random_normal_indices)
+
+# Appending the 2 indices
+under_sample_indices = np.concatenate([fraud_indices,random_normal_indices])
+
+# Under sample dataset
+under_sample_data = data.iloc[under_sample_indices,:]
+（2）過採樣（over sample）：效果更好（數據一般越多越好）
+
+讓兩類樣本同樣多。人工生成數據，比如生成1萬條負例。
+
+SMOTE（Synthetic Minority Oversampling Technique）算法：
+
+對於每一個少數類中的樣本x，按以下公式生成新樣本：
+
+[公式]
+
+d表示新樣本到原始樣本xi的距離。
+
+# 需事先安装imblearn库
+from imblearn.over_sampling import SMOTE
+oversampler=SMOTE(random_state=0)
+os_features,os_labels=oversampler.fit_sample(features_train,labels_train)
+
+
+8、假陽性和假陰性這兩種錯誤的重要性不同
+
+比如邊境的安檢會犯兩種錯誤，不是恐怖分子卻當作恐怖分子審訊，是恐怖分子卻當作正常人放行，無疑後者的錯誤更嚴重。
+
+解決方法：賦予不同類樣本不同的權重（或者使用不同的評估方法，見相關筆記）。比如賦予我們更關注的那類樣本更大的權重，使其對最終結果的影響更大。比如一個算法有更高的對貓的識別率，但卻會同時識別一些色情圖片，也就是說它錯誤率低，但錯誤的代價比較大。解決方法是評估指標中給那些色情圖片一個更大的權重，這樣分錯它們的懲罰就會更大。
+
+lr=LogisticRegression(class_weight='balance')
+# 如果效果不好，也可自己定义权重项
+penalty={0:5,1:1}
+lr=LogisticRegression(class_weight=penalty)
+7和8的情況，分別對應著評估指標中的查准率和查全率。當然很多情況下，這兩種情況是同時存在的，比如欺詐檢測問題，一方面欺詐樣本很少，是傾斜數據集，另一方面識別欺詐很重要，要賦予不同的權重。
+
