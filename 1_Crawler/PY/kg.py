@@ -594,27 +594,16 @@ for col in app_train:
 app_train = pd.get_dummies(app_train)
 app_test = pd.get_dummies(app_test)
 
-
+#
 app_train['DAYS_EMPLOYED_ANOM'] = app_train["DAYS_EMPLOYED"] == 365243
 app_train['DAYS_EMPLOYED'].replace({365243: np.nan}, inplace = True)
 app_test['DAYS_EMPLOYED_ANOM'] = app_test["DAYS_EMPLOYED"] == 365243
 app_test["DAYS_EMPLOYED"].replace({365243: np.nan}, inplace = True)
 
-
 app_train['DAYS_BIRTH'] = abs(app_train['DAYS_BIRTH'])
 app_test['DAYS_BIRTH'] = abs(app_test['DAYS_BIRTH'])
+# 填充因train&test data都要做，故可合併做
 
-#轉化成時間格式
+# 删除不需要的数据
 for data in [data_train, data_test_a]:
-    data['issueDate'] = pd.to_datetime(data['issueDate'],format='%Y-%m-%d')
-    startdate = datetime.datetime.strptime('2007-06-01', '%Y-%m-%d')
-    #構造時間特徵
-    data['issueDateDT'] = data['issueDate'].apply(lambda x: x-startdate).dt.days
-
-
-from sklearn import preprocessing
-encoder = preprocessing.OneHotEncoder()
-encoder.fit(train["cat_feature"])
-encoder.transform(train["cat_feature"].toarray()
-encoder.transform(test["cat_feature"].toarray()
-
+    data.drop(['issueDate','id'], axis=1,inplace=True)
