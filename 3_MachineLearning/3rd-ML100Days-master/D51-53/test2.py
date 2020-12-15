@@ -86,7 +86,7 @@ na_check(df_cp)
 # 將資料最大最小化
 df_cp = MinMaxScaler().fit_transform(df_cp)  
 
-
+#
 # 將前述轉換完畢資料 df , 重新切成 train_X, test_X
 train_num = train_Y.shape[0]
 train_X = df_cp[:train_num]

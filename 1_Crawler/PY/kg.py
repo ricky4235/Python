@@ -428,7 +428,7 @@ for ind,k in enumerate(k_list):
     Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
     Z = Z.reshape(xx.shape)
 
-    plt.subplot(321+ind)  
+    plt.subplot(321+ind)
     plt.pcolormesh(xx, yy, Z, cmap=cmap_light)
 
     plt.scatter(X[:, 0], X[:, 1], c=y, cmap=cmap_bold,
@@ -450,11 +450,12 @@ for i, k in enumerate(n_neighbors):
     plt.plot(T, y_, color='navy', label='prediction')
     plt.axis('tight')
     plt.legend()
-    plt.title("KNeighborsRegressor (k = %i)" 
+    plt.title("KNeighborsRegressor (k = %i)"
               % (k))
 
 plt.tight_layout()
 plt.show()
+
 
 
 import numpy as np
@@ -480,10 +481,8 @@ imputer.fit_transform(X)
 nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2, np.nan], [8, 8, 7]])
 nan_euclidean_distances([[np.nan, 6, 5], [3, 4, 3]], [[3, 4, 3], [1, 2,
                          
-
 input_file = './horse-colic.csv'
 df_data = pd.read_csv(input_file, header=None, na_values='?')
-
 
 data = df_data.values
 ix = [i for i in range(data.shape[1]) if i != 23]
@@ -497,7 +496,6 @@ for i in range(df_data.shape[1]):
     if n_miss.values[0] > 0:
         print('>Feat: %d, Missing: %d, Missing ratio: (%.2f%%)' % (i, n_miss, perc))
 
-
 print('KNNImputer before Missing: %d' % sum(np.isnan(X).flatten()))
 
 imputer = KNNImputer()
@@ -505,7 +503,6 @@ imputer.fit(X)
 Xtrans = imputer.transform(X)
 
 print('KNNImputer after Missing: %d' % sum(np.isnan(Xtrans).flatten()))
-
 
 import numpy as np
 from sklearn.metrics import confusion_matrix
@@ -582,10 +579,12 @@ le_count = 0
 
 
 for col in app_train:
+    if list
     if app_train[col].dtype == 'object':
 
         if len(list(app_train[col].unique())) <= 2:
             le.fit(app_train[col])
+            
             app_train[col] = le.transform(app_train[col])
             app_test[col] = le.transform(app_test[col])
             
@@ -593,8 +592,8 @@ for col in app_train:
             
 app_train = pd.get_dummies(app_train)
 app_test = pd.get_dummies(app_test)
+app_trainning data
 
-#
 app_train['DAYS_EMPLOYED_ANOM'] = app_train["DAYS_EMPLOYED"] == 365243
 app_train['DAYS_EMPLOYED'].replace({365243: np.nan}, inplace = True)
 app_test['DAYS_EMPLOYED_ANOM'] = app_test["DAYS_EMPLOYED"] == 365243
@@ -602,8 +601,23 @@ app_test["DAYS_EMPLOYED"].replace({365243: np.nan}, inplace = True)
 
 app_train['DAYS_BIRTH'] = abs(app_train['DAYS_BIRTH'])
 app_test['DAYS_BIRTH'] = abs(app_test['DAYS_BIRTH'])
-# 填充因train&test data都要做，故可合併做
 
-# 删除不需要的数据
 for data in [data_train, data_test_a]:
     data.drop(['issueDate','id'], axis=1,inplace=True)
+data.train = data.test_a
+#
+
+normal_indices = data[data.Class == 0].index
+
+random_normal_indices = np.random.choice(normal_indices, number_records_fraud, replace = False)
+random_normal_indices = np.array(random_normal_indices)
+
+# Appending the 2 indices
+under_sample_indices = np.concatenate([fraud_indices,random_normal_indices])
+
+# Under sample dataset
+under_sample_data = data.iloc[under_sample_indices,:]
+
+
+SelectKBest(lambda X, Y: array(map(lambda x:pearsonr(x, Y), X.T)).T, k=2).
+fit_transform(iris.data, iris.target)
