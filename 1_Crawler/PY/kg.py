@@ -581,7 +581,7 @@ le_count = 0
 for col in app_train:
     if list
     if app_train[col].dtype == 'object':
-
+#
         if len(list(app_train[col].unique())) <= 2:
             le.fit(app_train[col])
             
@@ -589,7 +589,7 @@ for col in app_train:
             app_test[col] = le.transform(app_test[col])
             
             le_count += 1
-            
+            #
 app_train = pd.get_dummies(app_train)
 app_test = pd.get_dummies(app_test)
 app_trainning data
@@ -605,7 +605,6 @@ app_test['DAYS_BIRTH'] = abs(app_test['DAYS_BIRTH'])
 for data in [data_train, data_test_a]:
     data.drop(['issueDate','id'], axis=1,inplace=True)
 data.train = data.test_a
-#
 
 normal_indices = data[data.Class == 0].index
 
@@ -615,9 +614,3 @@ random_normal_indices = np.array(random_normal_indices)
 # Appending the 2 indices
 under_sample_indices = np.concatenate([fraud_indices,random_normal_indices])
 
-# Under sample dataset
-under_sample_data = data.iloc[under_sample_indices,:]
-
-
-SelectKBest(lambda X, Y: array(map(lambda x:pearsonr(x, Y), X.T)).T, k=2).
-fit_transform(iris.data, iris.target)
