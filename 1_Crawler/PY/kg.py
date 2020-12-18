@@ -510,8 +510,10 @@ y_pred = [0, 1, 0, 1]
 y_true = [0, 1, 1, 0]
 
 chi2
+
 from sklearn.preprocessing import MinMaxScaler
 import xgboost as xgb
+import boost as bt
 import lightgbm as lgb
 from catboost import CatBoostRegressor
 import warnings
@@ -536,10 +538,8 @@ def find_outliers_by_3segama(data,fea):
     data_mean = np.mean(data[fea])
     outliers_cut_off = data_std * 3
 
-
 import warnings
 warnings.filterwarnings('ignore')
-
 
 Dataframe(X,y) = ()
 
@@ -547,70 +547,12 @@ clf1 = KNeighborsClassifier(n_neighbors=1)
 clf2 = RandomForestClassifier(random_state=1)
 clf3 = GaussianNB()
 lr = LogisticRegression()
-sclf = StackingClassifier(classifiers=[clf1, clf2, clf3], 
-                          meta_classifier=lr)
+sclf = StackingClassifier(classifiers=[clf1, clf
 
-label = ['KNN', 'Random Forest', 'Naive Bayes', 'Stacking Classifier']
+label = ['KNN', 'Random Forest', 'Naive Bayes', 'Stacking Classifier', 'Decide Tree']
 clf_list = [clf1, clf2, clf3, sclf]
 
 fig = plt.figure(figsize=(10,8))
 gs = gridspec.GridSpec(2, 2)
 grid = itertools.product([0,1],repeat=2)
-
-clf_cv_mean = []
-clf_cv_std = []
-for clf, label, grd in zip(clf_list, label, grid):
-    f_scores
-
-    scores = cross_val_score(clf, X, y, cv=5, scoring='accuracy')
-    print("Accuracy: %.2f (+/- %.2f) [%s]" %(scores.mean(), scores.std(), label))
-    clf_cv_mean.append(scores.mean())
-    clf_cv_std.append(scores.std())
-
-    clf.fit(X, y)
-    ax = plt.subplot(gs[grd[0], grd[1]])
-    fig = plot_decision_regions(X=X, y=y, clf=clf)
-    plt.title(label)
-
-plt.show()
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-le_count = 0
-
-
-for col in app_train:
-    if list
-    if app_train[col].dtype == 'object':
-#
-        if len(list(app_train[col].unique())) <= 2:
-            le.fit(app_train[col])
-            
-            app_train[col] = le.transform(app_train[col])
-            app_test[col] = le.transform(app_test[col])
-            
-            le_count += 1
-            #
-app_train = pd.get_dummies(app_train)
-app_test = pd.get_dummies(app_test)
-app_trainning data
-
-app_train['DAYS_EMPLOYED_ANOM'] = app_train["DAYS_EMPLOYED"] == 365243
-app_train['DAYS_EMPLOYED'].replace({365243: np.nan}, inplace = True)
-app_test['DAYS_EMPLOYED_ANOM'] = app_test["DAYS_EMPLOYED"] == 365243
-app_test["DAYS_EMPLOYED"].replace({365243: np.nan}, inplace = True)
-
-app_train['DAYS_BIRTH'] = abs(app_train['DAYS_BIRTH'])
-app_test['DAYS_BIRTH'] = abs(app_test['DAYS_BIRTH'])
-
-for data in [data_train, data_test_a]:
-    data.drop(['issueDate','id'], axis=1,inplace=True)
-data.train = data.test_a
-
-normal_indices = data[data.Class == 0].index
-
-random_normal_indices = np.random.choice(normal_indices, number_records_fraud, replace = False)
-random_normal_indices = np.array(random_normal_indices)
-
-# Appending the 2 indices
-under_sample_indices = np.concatenate([fraud_indices,random_normal_indices])
 
