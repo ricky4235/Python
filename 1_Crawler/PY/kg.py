@@ -509,15 +509,6 @@ from sklearn.metrics import confusion_matrix
 y_pred = [0, 1, 0, 1]
 y_true = [0, 1, 1, 0]
 
-chi2
-
-from sklearn.preprocessing import MinMaxScaler
-import xgboost as xgb
-import boost as bt
-import lightgbm as lgb
-from catboost import CatBoostRegressor
-import warnings
-from sklearn.model_selection import StratifiedKFold, KFold
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, log_loss
 warnings.filterwarnings('ignore')
 
@@ -556,3 +547,33 @@ fig = plt.figure(figsize=(10,8))
 gs = gridspec.GridSpec(2, 2)
 grid = itertools.product([0,1],repeat=2)
 
+df_temp = pd.DataFrame()
+for col in object_features:
+    df_temp[col] = LabelEncoder().fit_transform(df[col])
+df_temp['Cabin_Hash'] = df['Cabin'].map(lambda x: hash(x) % 10)
+
+
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+df_mm = MinMaxScaler().fit_transform(df)
+df_sc = StandardScaler().fit_transform(df)
+
+Exploratory = X_train.copy()
+
+load data
+heal data and remove outliers
+work with shops/items/cats objects and features
+create matrix as product of item/shop pairs within each month in the train set
+get monthly sales for each item/shop pair in the train set and merge it to the matrix
+clip item_cnt_month by (0,20)
+append test to the matrix, fill 34 month nans with zeros
+merge shops/items/cats to the matrix
+add target lag features
+add mean encoded features
+add price trend features
+add month
+add days
+add months since last sale/months since first sale features
+cut first year and drop columns which can not be calculated for the test set
+select best features
+set validation strategy 34 test, 33 validation, less than 33 train
+fit the model, predict and clip targets for the test set
